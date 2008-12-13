@@ -1,0 +1,2 @@
+all:
+	g++ -D_NIX cfmod_test.cpp ../../lib/cfmod_linux.o -lfmodex -o ../../bin/cfmod_test
