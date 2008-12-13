@@ -20,6 +20,7 @@ FMOD::Player::Player()
 	#ifdef DBUG
 		std::cout<<"DEBUG: FMOD::Player::Player(): "<<getLastError()<<std::endl;
 	#endif
+
 	volume = 1.0f;
 }
 
