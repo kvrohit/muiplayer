@@ -11,6 +11,9 @@ author: ksk
 void MUIPlaylist::Playlist::renderPlaylist(std::string filePath) throw (PlaylistException)
 {
     char buff[256];
+	std::string validExts[] = {"m3u", "pls", ""}, ext;
+	bool isValid = false;
+	
 	
     instream.open( filePath.c_str(), std::ifstream::in);
 	
@@ -19,7 +22,18 @@ void MUIPlaylist::Playlist::renderPlaylist(std::string filePath) throw (Playlist
 		throw PlaylistException("File not found");
 	
 	// check for valid extension
-	if( 0 != stricmp(filePath.substr( filePath.length()-3 ).c_str(), "m3u") )
+	ext = filePath.substr(filePath.length()-3);
+	
+	for(int i=0; validExts[i]!=""; i++)
+	{
+		if( 0 == stricmp( ext.c_str(), validExts[i].c_str()) )
+		{
+			isValid = true;
+			break;
+		}
+	}
+	
+	if( !isValid )	
 	{
 		instream.close();
 		throw PlaylistException("Invalid file");
@@ -28,8 +42,10 @@ void MUIPlaylist::Playlist::renderPlaylist(std::string filePath) throw (Playlist
 	instream.getline( buff, 255 );
 	
 	// check for valid header
-	if ( 0 == strcmp(buff, "#EXTM3U") )
+	if( 0 == strcmp(buff, "#EXTM3U") )
 		readHandler = &MUIPlaylist::Playlist::getNextM3UEntry;		
+	else if( 0 == strcmp(buff, "[playlist]") )
+		readHandler = &MUIPlaylist::Playlist::getNextPLSEntry;
 	else
 	{
 		instream.close();
@@ -77,6 +93,7 @@ bool MUIPlaylist::Playlist::hasNextEntry()
 	return !instream.eof();
 }
 
+/* M3U Specific */
 bool MUIPlaylist::Playlist::getNextM3UEntry(int &length, std::string &title, std::string &path)
 {
     char buff[255], *tok;
@@ -92,7 +109,7 @@ bool MUIPlaylist::Playlist::getNextM3UEntry(int &length, std::string &title, std
 	while( strlen(buff) == 0 );
 	
 	tok = strtok(buff, ":,"); // gets #EXTINF	
-	if( 0 != strcmp(tok, "#EXTINF") ) return false;
+	if( 0 != strcmp(tok, "#EXTINF") ) return false; // invalid sub-header
 	tok = strtok(NULL, ","); // gets length
 	sscanf(tok, "%d", &length);
 
@@ -119,4 +136,11 @@ void MUIPlaylist::Playlist::writeNextM3UEntry(int &length, std::string &title, s
 void MUIPlaylist::Playlist::endList()
 {
 	outstream.close();
+}
+
+/* PLS Specific */
+
+bool MUIPlaylist::Playlist::getNextPLSEntry(int &length, std::string &title, std::string &path)
+{
+	
 }
