@@ -26,20 +26,20 @@ win_clean:
 	$(CXX) $(OPT) -DDBUG $(CPP_SRC).cpp -o $(LIB_PATH)/$(CPP_SRC).o	
 	@echo $(MSG_DONE)
 
-win_lib:
+linux_lib:
 	@echo $(MSG_LIB_START)
 	@$(CXX) --version	
-	$(CXX) $(OPT) $(CPP_SRC).cpp -o $(LIB_PATH)/$(CPP_SRC)_liunx.o	
+	$(CXX) $(OPT) -D_NIX $(CPP_SRC).cpp -o $(LIB_PATH)/$(CPP_SRC)_liunx.o	
 	@echo $(MSG_DONE)
 
-win_clean:
+linux_clean:
 	@echo $(MSG_CLEAN_START)
 	rm -f $(LIB_PATH)*.o
 	@echo $(MSG_DONE)
 	
-win_debug:
+linux_debug:
 	@echo $(MSG_DBUG_START)
 	@$(CXX) --version	
-	$(CXX) $(OPT) -DDBUG $(CPP_SRC).cpp -o $(LIB_PATH)/$(CPP_SRC)_linux.o	
+	$(CXX) $(OPT) -DDBUG -D_NIX $(CPP_SRC).cpp -o $(LIB_PATH)/$(CPP_SRC)_linux.o	
 	@echo $(MSG_DONE)
 
