@@ -12,7 +12,7 @@ int main(int argc, char **argv)
 {
 	FMOD::Player p;
 	int i, c;
-	float pos, len;
+	float pos, len;   
 	float wavedata[20];
 	
 	if( argc != 2 )
@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 		while(p.getPosition() < p.getLength())
 		{
 			
-		/*	pos = (float)p.getPosition();
+			pos = (float)p.getPosition();
 			len = (float)p.getLength();			
 			c = (int)((pos/len)*50);			
 			
@@ -45,24 +45,7 @@ int main(int argc, char **argv)
 			std::cout<<"|";
 			
 			for(i=0;i<50-c-1;i++) std::cout<<"-";
-			std::cout<<"] "<<c*2<<"%\r"; */
-			
-			p.getWaveData(wavedata, 20);
-			
-			for(i=0;i<20;i++)
-			{
-				std::cout<<"\t\t\t\t\t";
-				if(wavedata[i]>0.0f)
-					for(c=0;c<wavedata[i]*100;c++)
-						std::cout<<"*";
-				else
-					for(c=0;c<-wavedata[i]*100;c++)
-						std::cout<<"\r*\r";
-				std::cout<<std::endl;
-			}
-			
-				
-					
+			std::cout<<"] "<<c*2<<"%\r"; 
 			
 			#ifdef _WIN
 			Sleep( 1000 );
