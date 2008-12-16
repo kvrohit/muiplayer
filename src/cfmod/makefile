@@ -10,19 +10,37 @@ MSG_LIB_START = Building library...
 MSG_DBUG_START = Building debug version...
 MSG_DONE = Done.
 
-lib:
+win_lib:
 	@echo $(MSG_LIB_START)
 	@$(CXX) --version	
 	$(CXX) $(OPT) $(CPP_SRC).cpp -o $(LIB_PATH)/$(CPP_SRC).o	
 	@echo $(MSG_DONE)
 
-clean:
+win_clean:
 	@echo $(MSG_CLEAN_START)
 	rm -f $(LIB_PATH)*.o
 	@echo $(MSG_DONE)
-	debug:
+	win_debug:
+	@echo $(MSG_DBUG_START)
+	@$(CXX) --version	
+	$(CXX) $(OPT) -DDBUG $(CPP_SRC).cpp -o $(LIB_PATH)/$(CPP_SRC).o	
+	@echo $(MSG_DONE)
+
+linux_lib:
+	@echo $(MSG_LIB_START)
+	@$(CXX) --version	
+	$(CXX) $(OPT) $(CPP_SRC).cpp -o $(LIB_PATH)/$(CPP_SRC)_linux.o	
+	@echo $(MSG_DONE)
+
+linux_clean:
+	@echo $(MSG_CLEAN_START)
+	rm -f $(LIB_PATH)*.o
+	@echo $(MSG_DONE)
+	
+linux_debug:
 	@echo $(MSG_DBUG_START)
 	@$(CXX) --version	
 	$(CXX) $(OPT) -DDBUG $(CPP_SRC).cpp -o $(LIB_PATH)/$(CPP_SRC)_linux.o	
 	@echo $(MSG_DONE)
 
+	
