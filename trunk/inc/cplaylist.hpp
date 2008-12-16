@@ -13,6 +13,11 @@ author: ksk
 #include<cstring>
 #include<fstream>
 
+#ifdef _NIX
+	#include<strings.h>
+	#define stricmp strcasecmp
+#endif
+
 namespace MUIPlaylist
 {
     const std::string libversion = "1.3.1";
