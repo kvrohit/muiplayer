@@ -81,10 +81,6 @@ bool MUIPlaylist::Playlist::getNextM3UEntry(int &length, std::string &title, std
 {
     char buff[255], *tok;
 	
-	length = -1;
-	title = "meh";
-	path = "meh";
-	
 	do
 	{
 		if(!instream.getline( buff, 255 ))
