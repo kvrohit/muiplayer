@@ -38,7 +38,7 @@ namespace MUIPlaylist
 			bool getNextM3UEntry(int &length, std::string &title, std::string &path);
 			void writeNextM3UEntry(int &length, std::string &title, std::string &path);
 
-			void getNextPLSEntry(int &length, std::string &title, std::string &path){ }
+			bool getNextPLSEntry(int &length, std::string &title, std::string &path);
 			void writeNextPLSEntry(int length, std::string title, std::string path) { }	
 			
 			bool (MUIPlaylist::Playlist::*readHandler)(int &length, std::string &title, std::string &path);
