@@ -26,7 +26,7 @@ void MUIPlaylist::Playlist::renderPlaylist(std::string filePath) throw (Playlist
 	
 	for(int i=0; validExts[i]!=""; i++)
 	{
-		if( 0 == stricmp( ext.c_str(), validExts[i].c_str()) )
+		if( 0 == strcmp( ext.c_str(), validExts[i].c_str()) )
 		{
 			isValid = true;
 			break;
@@ -64,7 +64,7 @@ void MUIPlaylist::Playlist::createPlaylist(std::string filePath, bool append) th
 	if( !outstream.is_open() )
 		throw PlaylistException("Unable to create file");
 		
-	if( 0 == stricmp(filePath.substr( filePath.length()-3 ).c_str(), "m3u") )
+	if( 0 == strcmp(filePath.substr( filePath.length()-3 ).c_str(), "m3u") )
 	{
 		writeHandler = &MUIPlaylist::Playlist::writeNextM3UEntry;
 		if( !append ) 

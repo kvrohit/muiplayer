@@ -31,6 +31,10 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
 
     connect(ui.actionExit, SIGNAL(triggered()),
         this, SLOT(close()));
+    connect(ui.actionOpen, SIGNAL(triggered()),
+        this, SLOT(open()));
+    connect(ui.actionClear, SIGNAL(triggered()),
+        this, SLOT(clear()));
     
     connect(ui.buttonAdd, SIGNAL(clicked()),
         this, SLOT(addMusicFiles()));
@@ -137,9 +141,24 @@ void MUI::previous()
     handleDoubleClick(ui.tableView->currentIndex());
 }
 
+void MUI::open()
+{
+    QString filename = QFileDialog::getOpenFileName(this, "Open", "/",
+        "Playlist (*.m3u);;All Files (*.*)");
+    std::string file = filename.toStdString();
+    
+    MUIPlaylist::Playlist p;
+    int length;
+    
+    std::string title, filepath;
+    p.renderPlaylist(file);
+    while(p.getNextEntry(length, title, filepath))
+        model.setItem(model.rowCount(), new QStandardItem(QString::fromStdString(filepath)));
+}
+
 void MUI::addMusicFiles()
 {
-    QString filename;
+    QString filename;    
     QStringList files = QFileDialog::getOpenFileNames(this, "Open", "/",
         "Audio (*.mp3 *.aac *.mp4 *.ogg);;All files (*.*)");
     for (int i=0; i<files.size(); ++i)
@@ -147,6 +166,11 @@ void MUI::addMusicFiles()
         filename = files.at(i);
         model.setItem(model.rowCount(), new QStandardItem(filename));
     }
+}
+
+void MUI::clear()
+{
+    model.clear();
 }
 
 void MUI::displayTime()
