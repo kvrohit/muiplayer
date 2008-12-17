@@ -5,7 +5,7 @@ author: ksk
 
 */
 
-#include "..\..\inc\cplaylist.hpp"
+#include "../../inc/cplaylist.hpp"
 
 int main(int argc, char *argv[])
 {

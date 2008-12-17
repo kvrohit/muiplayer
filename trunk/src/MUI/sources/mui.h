@@ -3,6 +3,7 @@
 
 #include <QtGui>
 #include "cfmod.hpp"
+#include "cplaylist.hpp"
 #include "ui_mui.h"
 
 class MUI : public QMainWindow
@@ -17,6 +18,8 @@ private slots:
     void handleDoubleClick(const QModelIndex &);
     void addMusicFiles();
     void displayTime();
+    void open();
+    void clear();
     void stop();
     void play();
     void next();

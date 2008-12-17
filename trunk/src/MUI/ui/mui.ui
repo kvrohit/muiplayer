@@ -251,7 +251,16 @@
     </property>
     <addaction name="actionExit" />
    </widget>
+   <widget class="QMenu" name="menuPlaylist" >
+    <property name="title" >
+     <string>Playlist</string>
+    </property>
+    <addaction name="actionOpen" />
+    <addaction name="separator" />
+    <addaction name="actionClear" />
+   </widget>
    <addaction name="menuFile" />
+   <addaction name="menuPlaylist" />
    <addaction name="menuHelp" />
   </widget>
   <action name="actionAbout" >
@@ -270,6 +279,16 @@
    </property>
    <property name="text" >
     <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionOpen" >
+   <property name="text" >
+    <string>Open...</string>
+   </property>
+  </action>
+  <action name="actionClear" >
+   <property name="text" >
+    <string>Clear</string>
    </property>
   </action>
  </widget>
