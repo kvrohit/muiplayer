@@ -1,4 +1,5 @@
 #include "mui.h"
+#include "about.h"
 #include <string>
 
 MUI::MUI(QWidget *parent, Qt::WFlags flags)
@@ -35,6 +36,8 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
         this, SLOT(open()));
     connect(ui.actionClear, SIGNAL(triggered()),
         this, SLOT(clear()));
+    connect(ui.actionAbout, SIGNAL(triggered()),
+        this, SLOT(showAboutBox()));
     
     connect(ui.buttonAdd, SIGNAL(clicked()),
         this, SLOT(addMusicFiles()));
@@ -47,6 +50,12 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
 
     connect(ui.tableView, SIGNAL(doubleClicked(const QModelIndex &)),
         this, SLOT(handleDoubleClick(const QModelIndex &)));
+}
+
+void MUI::showAboutBox()
+{
+    About *a = new About();
+    a->show();
 }
 
 void MUI::handleDoubleClick(const QModelIndex &index)
@@ -76,7 +85,8 @@ void MUI::handleDoubleClick(const QModelIndex &index)
         ui.buttonPlay->setIcon(QIcon(":/images/images/pause.png"));
         isPlaying = true;
         timer->start();
-    } catch(FMOD::FMODException &e) {
+    }
+    catch(FMOD::FMODException &e) {
         qDebug() << "Render Error";
     }
 }

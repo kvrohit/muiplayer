@@ -27,6 +27,8 @@ private slots:
     void sSeek();
     void sFreeze();
     void sMove(int);
+    
+    void showAboutBox();
 
 private:
     Ui::MUIClass ui;
