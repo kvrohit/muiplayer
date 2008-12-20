@@ -6,6 +6,8 @@
 #include "cplaylist.hpp"
 #include "ui_mui.h"
 
+#define ROWHEIGHT 21
+
 class MUI : public QMainWindow
 {
     Q_OBJECT
@@ -41,6 +43,12 @@ private:
     int ms, lenms;
     int currentRow;
     bool isPlaying, isPaused;
+    
+    void loadSettings();
+    void saveSettings();
+    int getSongLength(const QString &);
+    QString getFilenameOnly(QString) const;
+    void closeEvent(QCloseEvent *);
 };
 
 #endif // MUI_H
