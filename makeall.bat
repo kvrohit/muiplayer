@@ -2,7 +2,7 @@
 echo --- Building Mui ---
 echo. 
 
-echo --- Building cfmod ---
+echo --- Building cfmod library ---
 echo.
 
 cd .\src\cfmod
@@ -11,10 +11,10 @@ make win_lib
 if not %errorlevel% == 0 goto bad_cfmod
 
 echo.
-echo --- cfmod built ---
+echo --- cfmod library built ---
 echo.
 
-echo --- Building cplaylist ---
+echo --- Building cplaylist library ---
 echo.
 cd ..\cplaylist
 make win_lib
@@ -22,7 +22,7 @@ make win_lib
 if not %errorlevel% == 0 goto bad_cplaylist
 
 echo.
-echo --- cplaylist built ---
+echo --- cplaylist library built ---
 echo.
 
 echo --- Building app MUI ---
