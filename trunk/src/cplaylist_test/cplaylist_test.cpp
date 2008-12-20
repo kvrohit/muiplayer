@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
 		
 	try
 	{
+		std::cout<<"cplaylist version: "<<MUIPlaylist::libversion<<std::endl;
 		p.renderPlaylist(argv[1]);
 		p.createPlaylist(argv[2], false);
 		
