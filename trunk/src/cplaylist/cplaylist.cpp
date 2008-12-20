@@ -114,7 +114,7 @@ bool MUIPlaylist::Playlist::getNextM3UEntry(int &length, std::string &title, std
 	sscanf(tok, "%d", &length);
 
 	tok = strtok(NULL, ""); // gets the title
-	title = tok;
+	title = (0 == tok) ? "" : tok;
 	
 	if(!instream.getline(buff, 255))	
 	{
