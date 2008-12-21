@@ -16,7 +16,7 @@ echo -e "--- Building cplaylist library ---\n"
 cd ../cplaylist
 make linux_lib
 
-if[ $? -ne 0]
+if [ $? -ne 0 ]
 then
 	echo -e "--- Error building cplaylist ---\n"
 	exit

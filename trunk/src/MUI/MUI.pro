@@ -18,9 +18,10 @@ RESOURCES += rcc/res.qrc
 win32 {
   LIBS += -L../../lib -lfmodex
   OBJECTS += ../../lib/cfmod.o ../../lib/cplaylist.o
+  CONFIG += console
 } else {
   LIBS += -L/usr/lib -lfmodex
-  OBJECTS += ../../lib/cfmod_linux.o ../../lib/cplaylist.o
+  OBJECTS += ../../lib/cfmod_linux.o ../../lib/cplaylist_linux.o
 }
 
 # Output
