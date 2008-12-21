@@ -19,6 +19,7 @@ public:
 private slots:
     void handleDoubleClick(const QModelIndex &);
     void addMusicFiles();
+    void addMusicFiles(QList<QUrl>);
     void displayTime();
     void open();
     void clear();
@@ -44,9 +45,12 @@ private:
     int currentRow;
     bool isPlaying, isPaused;
     
+    void dragEnterEvent(QDragEnterEvent *);
+    void dropEvent(QDropEvent *);
     void loadSettings();
     void saveSettings();
     int getSongLength(const QString &);
+    int checkFile(QString);
     QString getFilenameOnly(QString) const;
     void closeEvent(QCloseEvent *);
 };
