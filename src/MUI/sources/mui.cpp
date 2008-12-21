@@ -2,18 +2,24 @@
 #include "about.h"
 #include <string>
 
+
+
 MUI::MUI(QWidget *parent, Qt::WFlags flags)
     : QMainWindow(parent, flags)
-{
-    ui.setupUi(this);
-    ui.labelNowPlaying->setText("<b>Welcome to MUI</b><br />Alpha v0.0.1");
+{	
+	qWelcomeString = "<b>Welcome to MUI</b> <br/> Version 0.0.1";	
+	ui.setupUi(this);
+    ui.labelNowPlaying->setText(qWelcomeString);
     
     QStringList headerLabels;
-    headerLabels << "Songtitle" << "Duration" << "Filepath";
+    headerLabels << "Songtitle" << "Duration" << "Filepath";	
+	
     model.setHorizontalHeaderLabels(headerLabels);
     
     ui.tableView->setModel(&model);
-    ui.tableView->hideColumn(2);
+    ui.tableView->horizontalHeader()->setStretchLastSection( true );
+	ui.tableView->hideColumn(2);
+	
     currentRow = 0;
     isPlaying = isPaused = false;
     
@@ -42,6 +48,8 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
         this, SLOT(close()));
     connect(ui.actionOpen, SIGNAL(triggered()),
         this, SLOT(open()));
+	connect(ui.actionSave, SIGNAL(triggered()),
+        this, SLOT(save()));		
     connect(ui.actionClear, SIGNAL(triggered()),
         this, SLOT(clear()));
     connect(ui.actionAbout, SIGNAL(triggered()),
@@ -116,14 +124,14 @@ void MUI::handleDoubleClick(const QModelIndex &index)
         totalTime.sprintf("%02d:%02d", lenms / 1000 / 60, lenms / 1000 % 60);
         ui.labelTotalTime->setText(totalTime);
         
-        QStandardItem *item = new QStandardItem(totalTime);
-        item->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        QStandardItem *item = new QStandardItem(totalTime);        
         model.setItem(row, 1, item);
         
         ui.slider->setMaximum(lenms);
         p->play();
         
-        ui.labelNowPlaying->setText(title);
+		QString msg = "<b>Welcome to MUI</b><br/>Playing: ";
+        ui.labelNowPlaying->setText(msg.append(title));
         ui.buttonPlay->setIcon(QIcon(":/images/images/pause.png"));
         isPlaying = true;
         timer->start();
@@ -143,14 +151,18 @@ void MUI::stop()
     
     ui.labelTime->setText("00:00");
     ui.labelTotalTime->setText("00:00");
-    ui.labelNowPlaying->setText("<b>Welcome to MUI</b><br />Alpha v0.0.1");
+    ui.labelNowPlaying->setText(qWelcomeString);
 }
 
 void MUI::play()
 {
+	static QString prev;
     if(isPlaying)
     {
         p->pause();
+		prev = ui.labelNowPlaying->text();
+		QString msg = "<b>Welcome to MUI</b><br/>Paused";
+        ui.labelNowPlaying->setText(msg);
         ui.buttonPlay->setIcon(QIcon(":/images/images/play.png"));
         isPaused = true;
         isPlaying = false;
@@ -159,6 +171,7 @@ void MUI::play()
     else if(isPaused)
     {
         p->resume();
+		ui.labelNowPlaying->setText(prev);
         ui.buttonPlay->setIcon(QIcon(":/images/images/pause.png"));
         isPaused = false;
         isPlaying = true;
@@ -202,6 +215,7 @@ void MUI::open()
     
     MUIPlaylist::Playlist p;
     int length;
+	QString len;
     
     std::string title, filepath;
     p.renderPlaylist(file);
@@ -210,10 +224,42 @@ void MUI::open()
     {
         int r = model.rowCount();
         model.setItem(r, 0, new QStandardItem(QString::fromStdString(title)));
+		
+		len.sprintf("%02d:%02d", length/60, length%60);		
+		model.setItem(r, 1, new QStandardItem(len));
         model.setItem(r, 2, new QStandardItem(QString::fromStdString(filepath)));
         ui.tableView->setRowHeight(r, ROWHEIGHT);
     }
 }
+
+void MUI::save()
+{
+	QString filename = QFileDialog::getSaveFileName(this, "Save Playlist", "/",
+		"Playlist (*.m3u);;All Files (*.*)");
+	if( filename.isEmpty()) return;
+	std::string file = filename.toStdString();
+	
+	MUIPlaylist::Playlist p;
+	p.createPlaylist(file, false);
+	
+	std::string title, path, len;
+	int length, min, sec;
+	
+	for(int i=0;i<model.rowCount();i++)
+	{
+		title = QVariant(model.item(i, 0)->text()).toString().toStdString();
+		len = QVariant(model.item(i, 1)->text()).toString().toStdString();
+		path = QVariant(model.item(i, 2)->text()).toString().toStdString();
+		
+		sscanf(len.c_str(), "%d:%d", &min, &sec);
+		length = (min*60)+sec;
+		
+		p.writeNextEntry(length, title, path);
+	}
+	p.endList();
+}
+		
+		
 
 void MUI::addMusicFiles()
 {

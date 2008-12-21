@@ -78,6 +78,9 @@
           <property name="editTriggers" >
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>
+          <property name="alternatingRowColors" >
+           <bool>true</bool>
+          </property>
           <property name="selectionMode" >
            <enum>QAbstractItemView::SingleSelection</enum>
           </property>
@@ -236,7 +239,7 @@
      <x>0</x>
      <y>0</y>
      <width>329</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp" >
@@ -256,6 +259,7 @@
      <string>Playlist</string>
     </property>
     <addaction name="actionOpen" />
+    <addaction name="actionSave" />
     <addaction name="separator" />
     <addaction name="actionClear" />
    </widget>
@@ -291,9 +295,15 @@
     <string>Clear</string>
    </property>
   </action>
+  <action name="actionSave" >
+   <property name="text" >
+    <string>Save ...</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <resources>
+  <include location="../rcc/res.qrc" />
   <include location="../rcc/res.qrc" />
  </resources>
  <connections/>

@@ -22,10 +22,11 @@ private slots:
     void addMusicFiles(QList<QUrl>);
     void displayTime();
     void open();
+	void save();
     void clear();
     void stop();
     void play();
-    void next();
+    void next();	
     void previous();
     void sSeek();
     void sFreeze();
@@ -53,6 +54,8 @@ private:
     int checkFile(QString);
     QString getFilenameOnly(QString) const;
     void closeEvent(QCloseEvent *);
+	
+	QString qWelcomeString;
 };
 
 #endif // MUI_H

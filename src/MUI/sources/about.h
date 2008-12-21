@@ -1,17 +1,21 @@
 #ifndef ABOUT_H
 #define ABOUT_H
 
+#include <QtGui>
 #include "ui_about.h"
 #include "cfmod.hpp"
 #include "cplaylist.hpp"
+
+#define ROWHEIGHT 21
 
 class About : public QWidget
 {
     Q_OBJECT
     public:
-        About();
+        About();		
         
     private:
-        Ui::AboutDialog ui;
+        Ui::AboutDialog ui;		
+		QStandardItemModel model;
 };
 #endif
