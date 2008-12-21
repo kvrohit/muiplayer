@@ -26,6 +26,7 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
     ui.slider->setMaximum(0);
     
     loadSettings();
+    setAcceptDrops(true);
     
     connect(timer, SIGNAL(timeout()),
 		this, SLOT(displayTime()));
@@ -59,10 +60,33 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
         this, SLOT(handleDoubleClick(const QModelIndex &)));
 }
 
+void MUI::dragEnterEvent(QDragEnterEvent *event)
+{
+    if(event->mimeData()->hasUrls())
+        event->acceptProposedAction();
+}
+
+void MUI::dropEvent(QDropEvent *event)
+{
+    addMusicFiles(event->mimeData()->urls());
+    event->acceptProposedAction();
+}
+
 void MUI::showAboutBox()
 {
     About *a = new About();
     a->show();
+}
+
+int MUI::checkFile(QString file)
+{
+    int t;
+    QString supportedFormats = "aiff asf flac fsb it mid midi mod mp2 mp3 ogg raw s3m xm";
+    t = file.lastIndexOf(".");
+    t = file.length() - t - 1;
+    file = file.right(t);
+    if (supportedFormats.contains(file, Qt::CaseInsensitive)) return 1;
+    return 0;
 }
 
 QString MUI::getFilenameOnly(QString filepath) const
@@ -209,6 +233,23 @@ void MUI::addMusicFiles()
         //model.setItem(r, 1, new QStandardItem(totalTime));
         model.setItem(r, 2, new QStandardItem(filename));
         ui.tableView->setRowHeight(r, ROWHEIGHT);
+    }
+}
+
+void MUI::addMusicFiles(QList<QUrl> urls)
+{
+    foreach(QUrl url, urls)
+    {
+        QString filename = url.path();
+        qDebug() << filename;
+        if(checkFile(filename))
+        {
+            int r = model.rowCount();
+            model.setItem(r, 0, new QStandardItem(getFilenameOnly(filename)));
+            //model.setItem(r, 1, new QStandardItem(totalTime));
+            model.setItem(r, 2, new QStandardItem(filename));
+            ui.tableView->setRowHeight(r, ROWHEIGHT);
+        }
     }
 }
 
