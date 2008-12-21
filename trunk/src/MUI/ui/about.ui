@@ -81,7 +81,7 @@
           </font>
          </property>
          <property name="text" >
-          <string>Version 0.0.1 (Alpha)</string>
+          <string>Version 0.0.1</string>
          </property>
         </widget>
        </item>
@@ -105,7 +105,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex" >
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
@@ -137,57 +137,23 @@ p, li { white-space: pre-wrap; }
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout" >
        <item>
-        <widget class="QLabel" name="label_3" >
-         <property name="text" >
-          <string>CFMOD Library Version</string>
+        <widget class="QTableView" name="tableComponents" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="editTriggers" >
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="tabKeyNavigation" >
+          <bool>false</bool>
+         </property>
+         <property name="alternatingRowColors" >
+          <bool>true</bool>
          </property>
         </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="labelCFMODVersion" >
-         <property name="font" >
-          <font>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text" >
-          <string>1.1.3</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_6" >
-         <property name="text" >
-          <string>CPLAYLIST Library version</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="labelCPlaylistVersion" >
-         <property name="font" >
-          <font>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text" >
-          <string>1.0.0</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer" >
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0" >
-          <size>
-           <width>20</width>
-           <height>26</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>
@@ -209,8 +175,8 @@ p, li { white-space: pre-wrap; }
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>277</width>
-            <height>293</height>
+            <width>194</width>
+            <height>273</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_10" >
@@ -276,6 +242,8 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
+  <include location="../rcc/res.qrc" />
+  <include location="../rcc/res.qrc" />
   <include location="../rcc/res.qrc" />
  </resources>
  <connections>
