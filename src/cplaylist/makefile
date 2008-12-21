@@ -29,7 +29,7 @@ win_clean:
 linux_lib:
 	@echo $(MSG_LIB_START)
 	@$(CXX) --version	
-	$(CXX) $(OPT) -D_NIX $(CPP_SRC).cpp -o $(LIB_PATH)/$(CPP_SRC)_liunx.o	
+	$(CXX) $(OPT) -D_NIX $(CPP_SRC).cpp -o $(LIB_PATH)/$(CPP_SRC)_linux.o	
 	@echo $(MSG_DONE)
 
 linux_clean:
