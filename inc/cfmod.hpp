@@ -11,7 +11,7 @@
 
 namespace FMOD
 {
-	const std::string libversion = "1.3.3";
+	const std::string libversion = "1.3.4";
 
 	class Player;
 	class FMODException // encapsulate FMOD exceptions

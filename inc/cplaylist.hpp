@@ -20,7 +20,7 @@ author: ksk
 
 namespace MUIPlaylist
 {
-    const std::string libversion = "1.3.2";
+    const std::string libversion = "1.3.3";
 
 	class PlaylistException
 	{
