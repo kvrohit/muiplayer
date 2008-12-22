@@ -142,5 +142,5 @@ void MUIPlaylist::Playlist::endList()
 
 bool MUIPlaylist::Playlist::getNextPLSEntry(int &length, std::string &title, std::string &path)
 {
-	
+	return false;
 }
