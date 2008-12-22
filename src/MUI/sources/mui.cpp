@@ -116,7 +116,8 @@ void MUI::handleDoubleClick(const QModelIndex &index)
     std::string filename = file.toStdString();
     
     try {
-        stop();
+        if(isPlaying)
+			stop();
         
         p->renderFile(filename);
         lenms = p->getLength();
