@@ -6,6 +6,7 @@ echo --- Building cfmod library ---
 echo.
 
 cd .\src\cfmod
+make win_clean
 make win_lib
 
 if not %errorlevel% == 0 goto bad_cfmod
@@ -17,6 +18,7 @@ echo.
 echo --- Building cplaylist library ---
 echo.
 cd ..\cplaylist
+make win_clean
 make win_lib
 
 if not %errorlevel% == 0 goto bad_cplaylist
