@@ -129,6 +129,8 @@ void FMOD::Player::stop()
 	#ifdef DBUG
 			std::cout<<"DEBUG: FMOD::Player::stop(): "<<getLastError()<<std::endl;
 	#endif
+	
+	result = FMOD_Sound_Release( sound );
 
 }
 
