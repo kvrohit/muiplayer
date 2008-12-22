@@ -13,6 +13,7 @@ HEADERS += sources/mui.h sources/about.h
 FORMS += ui/mui.ui ui/about.ui
 SOURCES += sources/main.cpp sources/mui.cpp sources/about.cpp
 RESOURCES += rcc/res.qrc
+CONFIG += release
 
 # for OS specific builds
 win32 {
