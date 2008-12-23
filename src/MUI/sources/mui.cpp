@@ -2,19 +2,12 @@
 #include "about.h"
 #include <string>
 
-
-
 MUI::MUI(QWidget *parent, Qt::WFlags flags)
     : QMainWindow(parent, flags)
 {	
 	qWelcomeString = "<b>Welcome to MUI</b> <br/> Version 0.0.1";	
 	ui.setupUi(this);
     ui.labelNowPlaying->setText(qWelcomeString);
-    
-    QStringList headerLabels;
-    headerLabels << "Songtitle" << "Duration" << "Filepath";	
-	
-    model.setHorizontalHeaderLabels(headerLabels);
     
     ui.tableView->setModel(&model);
     ui.tableView->horizontalHeader()->setStretchLastSection( true );
@@ -47,9 +40,9 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
     connect(ui.actionExit, SIGNAL(triggered()),
         this, SLOT(close()));
     connect(ui.actionOpen, SIGNAL(triggered()),
-        this, SLOT(open()));
+        this, SLOT(openPlaylist()));
 	connect(ui.actionSave, SIGNAL(triggered()),
-        this, SLOT(save()));		
+        this, SLOT(savePlaylist()));		
     connect(ui.actionClear, SIGNAL(triggered()),
         this, SLOT(clear()));
     connect(ui.actionAbout, SIGNAL(triggered()),
@@ -84,23 +77,6 @@ void MUI::showAboutBox()
 {
     About *a = new About();
     a->show();
-}
-
-int MUI::checkFile(QString file)
-{
-    int t;
-    QString supportedFormats = "aiff asf flac fsb it mid midi mod mp2 mp3 ogg raw s3m xm";
-    t = file.lastIndexOf(".");
-    t = file.length() - t - 1;
-    file = file.right(t);
-    if (supportedFormats.contains(file, Qt::CaseInsensitive)) return 1;
-    return 0;
-}
-
-QString MUI::getFilenameOnly(QString filepath) const
-{
-    filepath = filepath.section('/', -1);
-    return (filepath.left(filepath.lastIndexOf(".")));
 }
 
 void MUI::handleDoubleClick(const QModelIndex &index)
@@ -207,80 +183,32 @@ void MUI::previous()
     handleDoubleClick(ui.tableView->currentIndex());
 }
 
-void MUI::open()
+void MUI::openPlaylist()
 {
-    QString filename = QFileDialog::getOpenFileName(this, "Open", "/",
+    QString filename = QFileDialog::getOpenFileName(this, "Open Playlist", "/",
         "Playlist (*.m3u);;All Files (*.*)");
+        
     if(filename.isEmpty()) return;
-    std::string file = filename.toStdString();
-    
-    MUIPlaylist::Playlist p;
-    int length;
-	QString len;
-    
-    std::string title, filepath;
-    p.renderPlaylist(file);
-    
-    while(p.getNextEntry(length, title, filepath))
-    {
-        int r = model.rowCount();
-        model.setItem(r, 0, new QStandardItem(QString::fromStdString(title)));
-		
-		len.sprintf("%02d:%02d", length/60, length%60);		
-		model.setItem(r, 1, new QStandardItem(len));
-        model.setItem(r, 2, new QStandardItem(QString::fromStdString(filepath)));
-        ui.tableView->setRowHeight(r, ROWHEIGHT);
-    }
+    model.appendPlaylist(filename);
 }
 
-void MUI::save()
+void MUI::savePlaylist()
 {
 	QString filename = QFileDialog::getSaveFileName(this, "Save Playlist", "/",
 		"Playlist (*.m3u);;All Files (*.*)");
-	if( filename.isEmpty()) return;
-	std::string file = filename.toStdString();
 	
-	MUIPlaylist::Playlist p;
-	p.createPlaylist(file, false);
-	
-	std::string title, path, len;
-	int length, min, sec;
-	
-	for(int i=0;i<model.rowCount();i++)
-	{
-		title = QVariant(model.item(i, 0)->text()).toString().toStdString();
-		len = QVariant(model.item(i, 1)->text()).toString().toStdString();
-		path = QVariant(model.item(i, 2)->text()).toString().toStdString();
-		
-		sscanf(len.c_str(), "%d:%d", &min, &sec);
-		length = (min*60)+sec;
-		
-		p.writeNextEntry(length, title, path);
-	}
-	p.endList();
+    if(filename.isEmpty()) return;
+    model.savePlaylist(filename);
 }
-		
-		
 
 void MUI::addMusicFiles()
 {
     QString filename;
-    //QString totalTime;
-    //int lenms;
     QStringList files = QFileDialog::getOpenFileNames(this, "Open", "/",
         "Audio (*.mp3 *.aac *.mp4 *.ogg);;All files (*.*)");
-    for (int i=0; i<files.size(); ++i)
-    {
-        filename = files.at(i);
-        //lenms = getSongLength(filename);
-        //totalTime.sprintf("%02d:%02d", lenms / 1000 / 60, lenms / 1000 % 60);
-        
-        int r = model.rowCount();
-        model.setItem(r, 0, new QStandardItem(getFilenameOnly(filename)));
-        //model.setItem(r, 1, new QStandardItem(totalTime));
-        model.setItem(r, 2, new QStandardItem(filename));
-        ui.tableView->setRowHeight(r, ROWHEIGHT);
-    }
+    
+    foreach(QString filename, files)
+        model.append(filename);
 }
 
 void MUI::addMusicFiles(QList<QUrl> urls)
@@ -288,29 +216,18 @@ void MUI::addMusicFiles(QList<QUrl> urls)
     foreach(QUrl url, urls)
     {
         QString filename = url.path();
+        #ifdef WIN32
+        filename = filename.right(filename.length() - 1);
         qDebug() << filename;
-        if(checkFile(filename))
-        {
-            int r = model.rowCount();
-            model.setItem(r, 0, new QStandardItem(getFilenameOnly(filename)));
-            //model.setItem(r, 1, new QStandardItem(totalTime));
-            model.setItem(r, 2, new QStandardItem(filename));
-            ui.tableView->setRowHeight(r, ROWHEIGHT);
-        }
+        #endif
+        qDebug() << filename;
+        model.append(filename);
     }
-}
-
-// Fixme : serious bug
-int MUI::getSongLength(const QString &filename)
-{
-    std::string file = filename.toStdString();
-    p->renderFile(file);
-    return (p->getLength());
 }
 
 void MUI::clear()
 {
-    model.removeRows(0, model.rowCount());
+    model.clear();
     currentRow = 0;
 }
 
