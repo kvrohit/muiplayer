@@ -2,12 +2,22 @@
 echo --- Building Mui ---
 echo. 
 
+if not exist .\src\mui\makefile goto no_clean
+
+echo --- Clearing workspace ---
+echo.
+
+cd .\src\mui
+mingw32-make clean
+cd ..\..\
+
+
+:no_clean
 echo --- Building cfmod library ---
 echo.
 
 cd .\src\cfmod
-make win_clean
-make win_lib
+mingw32-make win_lib
 
 if not %errorlevel% == 0 goto bad_cfmod
 
@@ -18,8 +28,7 @@ echo.
 echo --- Building cplaylist library ---
 echo.
 cd ..\cplaylist
-make win_clean
-make win_lib
+mingw32-make win_lib
 
 if not %errorlevel% == 0 goto bad_cplaylist
 
@@ -32,7 +41,7 @@ echo.
 
 cd ..\MUI
 qmake
-make
+mingw32-make
 
 if not %errorlevel% == 0 goto bad_qmake
 echo.
