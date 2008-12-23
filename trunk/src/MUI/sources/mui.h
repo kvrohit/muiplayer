@@ -3,8 +3,8 @@
 
 #include <QtGui>
 #include "cfmod.hpp"
-#include "cplaylist.hpp"
 #include "ui_mui.h"
+#include "playlistmodel.h"
 
 #define ROWHEIGHT 21
 
@@ -21,8 +21,8 @@ private slots:
     void addMusicFiles();
     void addMusicFiles(QList<QUrl>);
     void displayTime();
-    void open();
-	void save();
+    void openPlaylist();
+	void savePlaylist();
     void clear();
     void stop();
     void play();
@@ -40,7 +40,7 @@ private:
     FMOD::Player *p;
     
     QTimer *timer;
-    QStandardItemModel model;
+    PlaylistModel model;
     
     int ms, lenms;
     int currentRow;
@@ -50,9 +50,6 @@ private:
     void dropEvent(QDropEvent *);
     void loadSettings();
     void saveSettings();
-    int getSongLength(const QString &);
-    int checkFile(QString);
-    QString getFilenameOnly(QString) const;
     void closeEvent(QCloseEvent *);
 	
 	QString qWelcomeString;

@@ -9,9 +9,9 @@ DEPENDPATH += . rcc sources ui
 INCLUDEPATH += . ../../inc
 
 # Input
-HEADERS += sources/mui.h sources/about.h
+HEADERS += sources/mui.h sources/about.h sources/playlistmodel.h
 FORMS += ui/mui.ui ui/about.ui
-SOURCES += sources/main.cpp sources/mui.cpp sources/about.cpp
+SOURCES += sources/main.cpp sources/mui.cpp sources/about.cpp sources/playlistmodel.cpp
 RESOURCES += rcc/res.qrc
 CONFIG += release
 
