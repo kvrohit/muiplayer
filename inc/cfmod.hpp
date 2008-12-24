@@ -11,7 +11,7 @@
 
 namespace FMOD
 {
-	const std::string libversion = "1.3.4";
+	const std::string libversion = "1.3.5";
 
 	class Player;
 	class FMODException // encapsulate FMOD exceptions
@@ -54,6 +54,8 @@ namespace FMOD
 			
 			void getSpectrum(float *, int, int = 0, FMOD_DSP_FFT_WINDOW = FMOD_DSP_FFT_WINDOW_TRIANGLE); // obtains the spectrum
 			void getWaveData(float*, int, int = 0); // obtains current waveform data			
+			
+			unsigned int getLengthFromName(std::string);
 	};
 }
 
