@@ -248,3 +248,14 @@ void FMOD::Player::getWaveData(float *wavedata, int numvalues, int channel)
 		std::cout<<"DEBUG: FMOD::Player::getWaveData(float*, int, int): "<<getLastError()<<std::endl;
 	#endif
 }
+
+unsigned int FMOD::Player::getLengthFromName(std::string filepath)
+{
+	
+	FMOD_SOUND *sound;
+	unsigned int length;   
+	result =FMOD_System_CreateStream( system, filepath.c_str(), FMOD_2D | FMOD_SOFTWARE, 0, &sound );		
+	result =FMOD_Sound_GetLength( sound, &length, FMOD_TIMEUNIT_MS );
+	result =FMOD_Sound_Release( sound );
+	return length;
+}
