@@ -11,7 +11,6 @@ PlaylistModel::PlaylistModel()
 void PlaylistModel::append(const QString &filename)
 {
     int row = rowCount();
-    
     if(checkFile(filename))
     {
         setItem(row, TITLE, new QStandardItem(getFilenameOnly(filename)));

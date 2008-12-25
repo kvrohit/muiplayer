@@ -92,8 +92,7 @@ void MUI::handleDoubleClick(const QModelIndex &index)
     std::string filename = file.toStdString();
     
     try {
-        if(isPlaying)
-			stop();
+        if(isPlaying) stop();
         
         p->renderFile(filename);
         lenms = p->getLength();
@@ -218,10 +217,23 @@ void MUI::addMusicFiles(QList<QUrl> urls)
         QString filename = url.path();
         #ifdef WIN32
         filename = filename.right(filename.length() - 1);
-        qDebug() << filename;
         #endif
         qDebug() << filename;
-        model.append(filename);
+        
+        QFileInfo f(filename);
+        if(f.isDir())
+        {
+            QDirIterator *it = new QDirIterator(filename, QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot,
+                QDirIterator::Subdirectories);
+            while(it->hasNext()) {
+                model.append(it->next());
+                qApp->processEvents();
+            }
+        }
+        else
+        {
+            model.append(filename);
+        }
     }
 }
 
@@ -265,6 +277,12 @@ void MUI::sMove(int value)
 
 void MUI::loadSettings()
 {
+    // Load default playlist
+    QString file = QCoreApplication::applicationDirPath();
+    file.append("/default.m3u");
+    QFileInfo f(file);
+    if(f.exists()) model.appendPlaylist(file);
+    
     QSettings settings("BurningMedia", "MUI");
     
     settings.beginGroup("MainWindow");
