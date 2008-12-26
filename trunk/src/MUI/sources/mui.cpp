@@ -13,6 +13,32 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
     ui.tableView->horizontalHeader()->setStretchLastSection( true );
 	ui.tableView->hideColumn(2);
 	
+    // Sliders and Icons
+    widgetSlider = new QWidget(this);
+    
+    QHBoxLayout *layout = new QHBoxLayout;
+    QSizePolicy sp;
+    sp.setHorizontalPolicy(QSizePolicy::Expanding);
+    sp.setHorizontalStretch(1);
+    
+    slider = new QSlider(Qt::Horizontal, this);
+    slider->setSizePolicy(sp);
+    sliderVolume = new VolumeSlider(Qt::Horizontal, this);
+    
+    QLabel *labelTimeIcon = new QLabel(this);
+    labelTimeIcon->setPixmap(QPixmap(":/images/images/time.png"));
+    QLabel *labelVolumeIcon = new QLabel(this);
+    labelVolumeIcon->setPixmap(QPixmap(":/images/images/volume.png"));
+    
+    layout->addWidget(labelTimeIcon);
+    layout->addWidget(slider);
+    layout->addWidget(labelVolumeIcon);
+    layout->addWidget(sliderVolume);
+    widgetSlider->setLayout(layout);
+    
+    ui.toolBar->addWidget(widgetSlider);
+    // End Sliders and Icons
+    
     currentRow = 0;
     isPlaying = isPaused = false;
     
@@ -21,8 +47,8 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
     
     p = new FMOD::Player();
     
-    ui.slider->setMinimum(0);
-    ui.slider->setMaximum(0);
+    slider->setMinimum(0);
+    slider->setMaximum(0);
     
     loadSettings();
     setAcceptDrops(true);
@@ -30,12 +56,14 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
     connect(timer, SIGNAL(timeout()),
 		this, SLOT(displayTime()));
         
-    connect(ui.slider, SIGNAL(sliderReleased()),
+    connect(slider, SIGNAL(sliderReleased()),
         this, SLOT(sSeek()));
-    connect(ui.slider, SIGNAL(sliderPressed()),
+    connect(slider, SIGNAL(sliderPressed()),
         this, SLOT(sFreeze()));
-    connect(ui.slider, SIGNAL(sliderMoved(int)),
+    connect(slider, SIGNAL(sliderMoved(int)),
         this, SLOT(sMove(int)));
+    connect(sliderVolume, SIGNAL(sliderMoved(int)),
+        this, SLOT(sVolume(int)));
 
     connect(ui.actionExit, SIGNAL(triggered()),
         this, SLOT(close()));
@@ -50,11 +78,11 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
     
     connect(ui.buttonAdd, SIGNAL(clicked()),
         this, SLOT(addMusicFiles()));
-    connect(ui.buttonNext, SIGNAL(clicked()),
+    connect(ui.actionNext, SIGNAL(triggered()),
         this, SLOT(next()));
-    connect(ui.buttonPrevious, SIGNAL(clicked()),
+    connect(ui.actionPrevious, SIGNAL(triggered()),
         this, SLOT(previous()));
-    connect(ui.buttonPlay, SIGNAL(clicked()),
+    connect(ui.actionPlay, SIGNAL(triggered()),
         this, SLOT(play()));
 
     connect(ui.tableView, SIGNAL(doubleClicked(const QModelIndex &)),
@@ -86,7 +114,7 @@ void MUI::handleDoubleClick(const QModelIndex &index)
     
     row = index.row();
     currentRow = row;
-    
+        
     QString file = QVariant(index.sibling(row, 2).data()).toString();
     QString title = QVariant(index.sibling(row, 0).data()).toString();
     std::string filename = file.toStdString();
@@ -103,12 +131,13 @@ void MUI::handleDoubleClick(const QModelIndex &index)
         QStandardItem *item = new QStandardItem(totalTime);        
         model.setItem(row, 1, item);
         
-        ui.slider->setMaximum(lenms);
+        slider->setMaximum(lenms);
         p->play();
+        sVolume(volume);
         
 		QString msg = "<b>Welcome to MUI</b><br/>Playing: ";
         ui.labelNowPlaying->setText(msg.append(title));
-        ui.buttonPlay->setIcon(QIcon(":/images/images/pause.png"));
+        ui.actionPlay->setIcon(QIcon(":/images/images/pause.png"));
         isPlaying = true;
         timer->start();
     }
@@ -121,8 +150,8 @@ void MUI::stop()
 {
     p->stop();
     isPlaying = isPaused = false;
-    ui.buttonPlay->setIcon(QIcon(":/images/images/play.png"));
-    ui.slider->setValue(0);
+    ui.actionPlay->setIcon(QIcon(":/images/images/play.png"));
+    slider->setValue(0);
     timer->stop();
     
     ui.labelTime->setText("00:00");
@@ -139,7 +168,7 @@ void MUI::play()
 		prev = ui.labelNowPlaying->text();
 		QString msg = "<b>Welcome to MUI</b><br/>Paused";
         ui.labelNowPlaying->setText(msg);
-        ui.buttonPlay->setIcon(QIcon(":/images/images/play.png"));
+        ui.actionPlay->setIcon(QIcon(":/images/images/play.png"));
         isPaused = true;
         isPlaying = false;
         return;
@@ -148,7 +177,7 @@ void MUI::play()
     {
         p->resume();
 		ui.labelNowPlaying->setText(prev);
-        ui.buttonPlay->setIcon(QIcon(":/images/images/pause.png"));
+        ui.actionPlay->setIcon(QIcon(":/images/images/pause.png"));
         isPaused = false;
         isPlaying = true;
         return;
@@ -250,7 +279,7 @@ void MUI::displayTime()
     QString curTime;
     curTime.sprintf("%02d:%02d", ms / 1000 / 60, ms / 1000 % 60);
     
-    ui.slider->setValue(ms);
+    slider->setValue(ms);
     ui.labelTime->setText(curTime);
     
     if(ms == lenms) next();
@@ -258,7 +287,7 @@ void MUI::displayTime()
 
 void MUI::sSeek()
 {
-    unsigned int pos = ui.slider->value();
+    unsigned int pos = slider->value();
     p->setPosition(pos);
     timer->start();
 }
@@ -275,6 +304,19 @@ void MUI::sMove(int value)
     ui.labelTime->setText(curTime);
 }
 
+void MUI::sVolume(int value)
+{
+    qDebug() << value;
+    try {
+        float v = value / 100.00;
+        volume = value;
+        p->setVolume(v);
+    }
+    catch(FMOD::FMODException &e) {
+        qDebug() << "Volume Set Error";
+    }
+}
+
 void MUI::loadSettings()
 {
     // Load default playlist
@@ -288,6 +330,8 @@ void MUI::loadSettings()
     settings.beginGroup("MainWindow");
     resize(settings.value("size", QSize(400, 400)).toSize());
     move(settings.value("pos", QPoint(200, 200)).toPoint());
+    volume = settings.value("vol", 100).toInt();
+    sliderVolume->setValue(volume);
     settings.endGroup();
     
     settings.beginGroup("ColumnWidth");
@@ -310,6 +354,7 @@ void MUI::saveSettings()
     settings.beginGroup("MainWindow");
     settings.setValue("size", size());
     settings.setValue("pos", pos());
+    settings.setValue("vol", sliderVolume->value());
     settings.endGroup();
     
     settings.beginGroup("ColumnWidth");

@@ -5,6 +5,7 @@
 #include "cfmod.hpp"
 #include "ui_mui.h"
 #include "playlistmodel.h"
+#include "volumeslider.h"
 
 #define ROWHEIGHT 21
 
@@ -31,6 +32,7 @@ private slots:
     void sSeek();
     void sFreeze();
     void sMove(int);
+    void sVolume(int);
     
     void showAboutBox();
 
@@ -40,10 +42,14 @@ private:
     FMOD::Player *p;
     
     QTimer *timer;
+    QSlider *slider;
+    VolumeSlider *sliderVolume;
+    QWidget *widgetSlider;
     PlaylistModel model;
     
     int ms, lenms;
     int currentRow;
+    int volume;
     bool isPlaying, isPaused;
     
     void dragEnterEvent(QDragEnterEvent *);

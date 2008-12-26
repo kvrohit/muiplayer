@@ -1,19 +1,18 @@
 <RCC>
   <qresource prefix="images" >
-    <file>images/pause.png</file>
-    <file>images/stop.png</file>
-    <file>images/help.png</file>
+    <file>images/add.png</file>
+    <file>images/clear.png</file>
     <file>images/exit.png</file>
-    <file>images/player_start.png</file>
-    <file>images/play.png</file>
-    <file>images/next.png</file>
-    <file>images/previous.png</file>
-    <file>images/player_end.png</file>
-    <file>images/player_play.png</file>
+    <file>images/help.png</file>
     <file>images/juk.png</file>
-    <file>images/edit_add.png</file>
-    <file>images/edit_remove.png</file>
-    <file>images/fmod.png</file>
-    <file>images/qt.png</file>
+    <file>images/next.png</file>
+    <file>images/open.png</file>
+    <file>images/pause.png</file>
+    <file>images/play.png</file>
+    <file>images/previous.png</file>
+    <file>images/remove.png</file>
+    <file>images/save.png</file>
+    <file>images/time.png</file>
+    <file>images/volume.png</file>
   </qresource>
 </RCC>
