@@ -14,6 +14,7 @@ author: ksk
 #include<cstdio>
 #include<cstdlib>
 #include<ctime>
+#include<new>
 
 #ifdef _NIX
 	#include<strings.h>
@@ -22,7 +23,7 @@ author: ksk
 
 namespace AudioTag
 {
-	const std::string libversion = "1.0.0";
+	const std::string libversion = "1.1.0";
 	
 	// tag descriptors
 	typedef unsigned int TAG_DESCRIPTOR;
@@ -60,13 +61,21 @@ namespace AudioTag
 	
 	class TagException
 	{
-		private:
-			std::string e;
+		private:			
 			unsigned int er;
-		public:
-			TagException(std::string s):e(s), er(0) { }
-			TagException(EXCEPTION_DESCRIPTOR er): e(""), er(er) { }
-			std::string what() { return e; }
+		public:			
+			TagException(EXCEPTION_DESCRIPTOR er): er(er) { }
+			std::string what() 
+			{ 
+				switch(er)
+				{
+					case FILE_NOT_FOUND:  return "File not found";
+					case NO_TAG: 		  return "No Tag present";
+					case INVALID_TAG: 	  return "Invalid tag";
+					case UNSUPPORTED_TAG: return "Unsupported tag";
+					default:			  return "Unknown exception";
+				}
+			}
 			EXCEPTION_DESCRIPTOR errorCode() { return er; }		
 			
 	};
@@ -112,13 +121,13 @@ namespace AudioTag
 	class TagReader
 	{
 		private:
-		ID3v23TagReader id3v23_reader;		
+			ID3v23TagReader id3v23_reader;				
+			__generic_tag_reader *reader;
 		
-		__generic_tag_reader *reader;
 		public:		
-		void renderFile(std::string) throw(TagException);
-		GenericTag getTag();
-		std::string getTag(TAG_DESCRIPTOR);
+			void renderFile(std::string) throw(TagException);
+			GenericTag getTag();
+			std::string getTag(TAG_DESCRIPTOR);
 		
 	};
 	
