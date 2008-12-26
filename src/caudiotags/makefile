@@ -1,7 +1,7 @@
 CXX = g++
 LIB_PATH = ../../lib
 OPT = -Wall -pedantic -c
-CPP_SRC = cplaylist
+CPP_SRC = caudiotags
 
 #messages
 
@@ -20,7 +20,8 @@ win_clean:
 	@echo $(MSG_CLEAN_START)
 	del $(LIB_PATH)*.o
 	@echo $(MSG_DONE)
-	win_debug:
+	
+win_debug:
 	@echo $(MSG_DBUG_START)
 	@$(CXX) --version	
 	$(CXX) $(OPT) -DDBUG $(CPP_SRC).cpp -o $(LIB_PATH)/$(CPP_SRC).o	
