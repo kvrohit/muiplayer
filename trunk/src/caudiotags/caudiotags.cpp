@@ -127,7 +127,11 @@ std::string AudioTag::ID3v23TagReader::readCOMMFrame()
 	}
 	catch(std::bad_alloc &ba)
 	{
+		// skip this frame
+		while(frame_size--)
+			instream.read(&temp, 1);
 		return "";
+
 	}	
 	
 	instream.read(comm, frame_size-5);
@@ -141,15 +145,18 @@ std::string AudioTag::ID3v23TagReader::readCOMMFrame()
 
 std::string AudioTag::ID3v23TagReader::readTXXXFrame()
 {
-	char temp, *data;
+	char temp, *data;	
 	instream.read(&temp, 1); //text-encoding
 	
 	try
 	{
-		data = new char[frame_size];
+		data = new char[frame_size];		
 	}
 	catch(std::bad_alloc &ba)
 	{
+		// skip this frame
+		while(frame_size--)
+			instream.read(&temp, 1);
 		return "";
 	}
 	
@@ -165,27 +172,45 @@ std::string AudioTag::ID3v23TagReader::readTXXXFrame()
 std::string AudioTag::ID3v23TagReader::readAPICFrame()
 {
 	char temp, *picture_data;
+	unsigned int bytes_read = 0;
 	
-	instream.read(&temp, 1); // probably text-encoding
-	temp = 1;
-	while(temp != 0)
+	instream.read(&temp, 1); // text-encoding
+	bytes_read++;
+	
+	do
+	{
 		instream.read(&temp, 1); // get MIME type
+		bytes_read++;
+	}
+	while( temp != 0 );
 	
 	instream.read(&temp, 1); // get picture type
+	bytes_read++;
 	if( temp != 0 )
-		while(temp != 0)
-			instream.read(&temp, 1); // discard more nulls
+	{
+		do
+		{
+			instream.read(&temp, 1); // get picture description
+			bytes_read++;
+		}
+		while(temp != 0);
+	}	
 	
 	try
 	{
-		picture_data = new char[frame_size - 14]; // picture data
+		picture_data = new char[frame_size - bytes_read]; // picture data
 	}
 	catch(std::bad_alloc &ba)
 	{
+		// skip this frame
+		while(frame_size--)
+			instream.read(&temp, 1);
 		return "";
+
 	}	
 	
-	instream.read(picture_data, frame_size - 14);	
+	instream.read(picture_data, frame_size - bytes_read);
+	
 	
 	srand( time(NULL) );
 	unsigned int _random_num = rand();
