@@ -115,13 +115,20 @@ void AudioTag::ID3v23TagReader::renderFile(std::string file) throw (TagException
 std::string AudioTag::ID3v23TagReader::readCOMMFrame()
 {
 	
-	char temp, buff[3];
+	char temp, buff[3], *comm;
 	
 	instream.read(&temp, 1); // text-encoding
 	instream.read(buff, 3); // language
 	instream.read(&temp, 1); // has to be 0x00
 	
-	char *comm = new char[frame_size-6];
+	try
+	{
+		comm = new char[frame_size-6];
+	}
+	catch(std::bad_alloc &ba)
+	{
+		return "";
+	}	
 	
 	instream.read(comm, frame_size-5);
 	comm[frame_size-5]='\0';
@@ -134,10 +141,17 @@ std::string AudioTag::ID3v23TagReader::readCOMMFrame()
 
 std::string AudioTag::ID3v23TagReader::readTXXXFrame()
 {
-	char temp;
+	char temp, *data;
 	instream.read(&temp, 1); //text-encoding
 	
-	char *data = new char[frame_size];
+	try
+	{
+		data = new char[frame_size];
+	}
+	catch(std::bad_alloc &ba)
+	{
+		return "";
+	}
 	
 	instream.read(data, frame_size-1);
 	data[frame_size-1]='\0';
@@ -150,7 +164,7 @@ std::string AudioTag::ID3v23TagReader::readTXXXFrame()
 
 std::string AudioTag::ID3v23TagReader::readAPICFrame()
 {
-	char temp;
+	char temp, *picture_data;
 	
 	instream.read(&temp, 1); // probably text-encoding
 	temp = 1;
@@ -162,9 +176,14 @@ std::string AudioTag::ID3v23TagReader::readAPICFrame()
 		while(temp != 0)
 			instream.read(&temp, 1); // discard more nulls
 	
-	
-	char *picture_data = new char[frame_size - 14]; // picture data
-	if( 0 == picture_data ) return "";
+	try
+	{
+		picture_data = new char[frame_size - 14]; // picture data
+	}
+	catch(std::bad_alloc &ba)
+	{
+		return "";
+	}	
 	
 	instream.read(picture_data, frame_size - 14);	
 	
