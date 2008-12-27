@@ -12,6 +12,8 @@
 #define DURATION 1
 #define FILENAME 2
 
+#define ROWHEIGHT 21
+
 class PlaylistModel : public QStandardItemModel
 {
     public:

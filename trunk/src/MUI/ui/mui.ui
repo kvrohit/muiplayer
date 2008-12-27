@@ -8,7 +8,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>329</width>
+    <width>661</width>
     <height>480</height>
    </rect>
   </property>
@@ -26,6 +26,9 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="frameShadow" >
+         <enum>QFrame::Sunken</enum>
         </property>
         <property name="text" >
          <string/>
@@ -119,7 +122,7 @@
      </layout>
     </item>
     <item>
-     <widget class="QTabWidget" name="tabWidget" >
+     <widget class="QTabWidget" name="tabPlaylist" >
       <property name="tabPosition" >
        <enum>QTabWidget::North</enum>
       </property>
@@ -136,6 +139,12 @@
        <layout class="QVBoxLayout" name="verticalLayout_2" >
         <item>
          <widget class="QTableView" name="tableView" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="MinimumExpanding" hsizetype="Minimum" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="editTriggers" >
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>
@@ -200,7 +209,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>329</width>
+     <width>661</width>
      <height>21</height>
     </rect>
    </property>
@@ -243,7 +252,7 @@
     </size>
    </property>
    <attribute name="toolBarArea" >
-    <enum>BottomToolBarArea</enum>
+    <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak" >
     <bool>false</bool>
@@ -328,6 +337,8 @@
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <resources>
+  <include location="../rcc/res.qrc" />
+  <include location="../rcc/res.qrc" />
   <include location="../rcc/res.qrc" />
   <include location="../rcc/res.qrc" />
  </resources>

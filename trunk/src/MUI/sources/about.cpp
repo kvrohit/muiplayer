@@ -14,7 +14,7 @@ About::About()
 	ui.tableComponents->horizontalHeader()->setStretchLastSection( true );
 	// base
 	model.setItem(0, 0, new QStandardItem("MUI base"));
-    model.setItem(0, 1, new QStandardItem("0.0.1"));
+    model.setItem(0, 1, new QStandardItem("0.0.2"));
 	ui.tableComponents->setRowHeight(0, ROWHEIGHT);	
 	
 	// cfmod

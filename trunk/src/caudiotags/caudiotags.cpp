@@ -59,6 +59,15 @@ void AudioTag::ID3v23TagReader::renderFile(std::string file) throw (TagException
 		tag_size += (_size)<<(7*i);	
 	}
 	
+	// reset tag
+	tag.title = "";
+	tag.artist = "";
+	tag.album = "";
+	tag.track = 0;
+	tag.year = 0;
+	tag.artfile = "";
+	
+	// read frame	
 	while(tag_size--)
 	{
 		instream.read(data, 4); // obtain next frame

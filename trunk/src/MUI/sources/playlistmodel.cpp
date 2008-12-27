@@ -3,7 +3,7 @@
 PlaylistModel::PlaylistModel()
 {
     QStringList headerLabels;
-    headerLabels << "Songtitle" << "Duration" << "Filepath";    
+    headerLabels << "Title" << "Length" << "Filepath";    
     
     setHorizontalHeaderLabels(headerLabels);
 }
@@ -15,7 +15,7 @@ void PlaylistModel::append(const QString &filename)
     {
         setItem(row, TITLE, new QStandardItem(getFilenameOnly(filename)));
 		setItem(row, DURATION, new QStandardItem(QString("")));
-        setItem(row, FILENAME, new QStandardItem(filename));
+        setItem(row, FILENAME, new QStandardItem(filename));		
     }
 }
 
@@ -49,7 +49,7 @@ void PlaylistModel::appendPlaylist(const QString &filename)
         
         setItem(row, TITLE, new QStandardItem(QString::fromStdString(title)));
         setItem(row, DURATION, new QStandardItem(len));
-        setItem(row, FILENAME, new QStandardItem(QString::fromStdString(filepath)));
+        setItem(row, FILENAME, new QStandardItem(QString::fromStdString(filepath)));		
     }
 }
 
