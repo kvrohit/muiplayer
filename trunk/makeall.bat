@@ -13,7 +13,7 @@ cd ..\..\
 
 
 :no_clean
-echo --- Building cfmod library ---
+echo --- Building component cfmod ---
 echo.
 
 cd .\src\cfmod
@@ -22,10 +22,10 @@ mingw32-make win_lib
 if not %errorlevel% == 0 goto bad_cfmod
 
 echo.
-echo --- cfmod library built ---
+echo --- Component cfmod built ---
 echo.
 
-echo --- Building cplaylist library ---
+echo --- Building component cplaylist ---
 echo.
 cd ..\cplaylist
 mingw32-make win_lib
@@ -33,8 +33,21 @@ mingw32-make win_lib
 if not %errorlevel% == 0 goto bad_cplaylist
 
 echo.
-echo --- cplaylist library built ---
+echo --- Component cplaylist built ---
 echo.
+
+echo --- Building component caudiotags ---
+echo.
+
+cd ..\caudiotags
+mingw32-make win_lib
+
+if not %errorlevel% == 0 goto bad_caudiotags
+
+echo.
+echo --- Component caudiotags built ---
+echo.
+
 
 echo --- Building app MUI ---
 echo.
@@ -56,6 +69,11 @@ goto end
 
 :bad_cplaylist
 echo --- Error building cplaylist ---
+echo.
+goto end
+
+:bad_caudiotags
+echo --- Error building caudiotags ---
 echo.
 goto end
 
