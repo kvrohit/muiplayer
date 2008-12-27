@@ -27,7 +27,7 @@ namespace AudioTag
 	
 	// tag descriptors
 	typedef unsigned int TAG_DESCRIPTOR;
-	const TAG_DESCRIPTOR TITLE   = 0x00000001;
+	const TAG_DESCRIPTOR _TITLE   = 0x00000001;
 	const TAG_DESCRIPTOR ARTIST  = 0x00000002;
 	const TAG_DESCRIPTOR ALBUM   = 0x00000004;
 	const TAG_DESCRIPTOR COMMENT = 0x00000008;
