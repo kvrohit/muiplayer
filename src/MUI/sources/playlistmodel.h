@@ -4,6 +4,7 @@
 #include <QStandardItemModel>
 #include <QString>
 #include <QStandardItem>
+#include <QMessageBox>
 
 #include "cplaylist.hpp"
 

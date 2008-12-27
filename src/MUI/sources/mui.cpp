@@ -10,7 +10,7 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
     ui.labelNowPlaying->setText(qWelcomeString);
     
     ui.tableView->setModel(&model);
-    ui.tableView->horizontalHeader()->setStretchLastSection( true );
+    //ui.tableView->horizontalHeader()->setStretchLastSection( true );
 	ui.tableView->hideColumn(2);
 	
     // Sliders and Icons
@@ -119,11 +119,44 @@ void MUI::handleDoubleClick(const QModelIndex &index)
     QString title = QVariant(index.sibling(row, 0).data()).toString();
     std::string filename = file.toStdString();
     
-    try {
+    try 
+	{
+		QString msg = "<b>Welcome to MUI</b><br/>Playing: ";
+		
         if(isPlaying) stop();
         
-        p->renderFile(filename);
+        p->renderFile(filename);		
         lenms = p->getLength();
+		
+		msg.append(title);
+		
+		try
+		{
+			tagreader.renderFile(filename);
+			tag = tagreader.getTag();
+			msg="";
+			msg.append("<font size=6>");
+			msg.append(tag.artist.c_str());
+			msg.append(" / ");
+			msg.append(tag.title.c_str());
+			msg.append("</font><br/><font size = 4>");
+			msg.append(tag.album.c_str());
+			msg.append("</font>");
+			
+			if(tag.artfile != "")
+			{
+				QPixmap qp;
+				qp.load(tag.artfile.c_str());
+				qp = qp.scaledToHeight(100);
+				qp = qp.scaledToWidth(100);
+				ui.labelPic->setPixmap( qp );
+			}
+			wasTagged = true;		
+			
+		}
+		catch(AudioTag::TagException &tex)
+		{
+		}
         
         totalTime.sprintf("%02d:%02d", lenms / 1000 / 60, lenms / 1000 % 60);
         ui.labelTotalTime->setText(totalTime);
@@ -135,8 +168,8 @@ void MUI::handleDoubleClick(const QModelIndex &index)
         p->play();
         sVolume(volume);
         
-		QString msg = "<b>Welcome to MUI</b><br/>Playing: ";
-        ui.labelNowPlaying->setText(msg.append(title));
+		
+        ui.labelNowPlaying->setText(msg);
         ui.actionPlay->setIcon(QIcon(":/images/images/pause.png"));
         isPlaying = true;
         timer->start();
@@ -157,6 +190,12 @@ void MUI::stop()
     ui.labelTime->setText("00:00");
     ui.labelTotalTime->setText("00:00");
     ui.labelNowPlaying->setText(qWelcomeString);
+	
+	if(tag.artfile != "" && wasTagged)
+	{
+		QDir().remove( tag.artfile.c_str() );
+		wasTagged = false;
+	}
 }
 
 void MUI::play()
