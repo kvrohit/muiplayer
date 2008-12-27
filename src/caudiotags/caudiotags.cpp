@@ -222,6 +222,7 @@ std::string AudioTag::ID3v23TagReader::readAPICFrame()
 	out.write( picture_data, frame_size - 14);
 	out.close();
 	
+	delete picture_data;
 	return filename;
 }
 
