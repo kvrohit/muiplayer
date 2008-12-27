@@ -5,6 +5,7 @@
 #include "ui_about.h"
 #include "cfmod.hpp"
 #include "cplaylist.hpp"
+#include "caudiotags.hpp"
 
 #define ROWHEIGHT 21
 

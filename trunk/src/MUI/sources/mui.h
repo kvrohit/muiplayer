@@ -2,10 +2,12 @@
 #define MUI_H
 
 #include <QtGui>
-#include "cfmod.hpp"
 #include "ui_mui.h"
 #include "playlistmodel.h"
 #include "volumeslider.h"
+
+#include "cfmod.hpp"
+#include "caudiotags.hpp"
 
 #define ROWHEIGHT 21
 
@@ -59,6 +61,11 @@ private:
     void closeEvent(QCloseEvent *);
 	
 	QString qWelcomeString;
+	
+	AudioTag::TagReader tagreader;
+	AudioTag::GenericTag tag;
+	
+	bool wasTagged;
 };
 
 #endif // MUI_H

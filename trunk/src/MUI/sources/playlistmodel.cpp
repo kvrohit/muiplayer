@@ -14,6 +14,7 @@ void PlaylistModel::append(const QString &filename)
     if(checkFile(filename))
     {
         setItem(row, TITLE, new QStandardItem(getFilenameOnly(filename)));
+		setItem(row, DURATION, new QStandardItem(QString("")));
         setItem(row, FILENAME, new QStandardItem(filename));
     }
 }
@@ -26,7 +27,20 @@ void PlaylistModel::appendPlaylist(const QString &filename)
     std::string title, filepath, file;
     
     file = filename.toStdString();
-    p.renderPlaylist(file);
+    try
+	{
+		p.renderPlaylist(file);
+	}
+	catch(MUIPlaylist::PlaylistException &plex)
+	{
+		QString errmsg = "The playlist [";
+		errmsg.append(getFilenameOnly(filename));
+		errmsg.append("] could not be loaded, ");
+		errmsg.append(plex.what().c_str());
+		
+		QMessageBox::information(0, "Error loading playlist", errmsg);
+		return;
+	}
     
     while(p.getNextEntry(length, title, filepath))
     {
@@ -54,8 +68,11 @@ void PlaylistModel::savePlaylist(const QString &filename)
         len = QVariant(item(i, DURATION)->text()).toString().toStdString();
         path = QVariant(item(i, FILENAME)->text()).toString().toStdString();
         
-        sscanf(len.c_str(), "%d:%d", &min, &sec);
-        length = (min * 60) + sec;
+		
+		if(sscanf(len.c_str(), "%02d:%02d", &min, &sec) == 2)
+			length = (min * 60) + sec;		
+		else
+			length = 0;        
         
         p.writeNextEntry(length, title, path);
     }

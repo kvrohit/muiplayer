@@ -27,6 +27,10 @@ About::About()
     model.setItem(2, 1, new QStandardItem(QString::fromStdString(MUIPlaylist::libversion)));
 	ui.tableComponents->setRowHeight(2, ROWHEIGHT);	
 	
-    
+	//caudiotags
+    model.setItem(3, 0, new QStandardItem("caudiotags"));
+    model.setItem(3, 1, new QStandardItem(QString::fromStdString(AudioTag::libversion)));
+	ui.tableComponents->setRowHeight(2, ROWHEIGHT);		
+	
     ui.labelQtVersion->setText(qtVer.append(qVersion()));
 }
