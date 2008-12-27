@@ -10,7 +10,7 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
     ui.labelNowPlaying->setText(qWelcomeString);
     
     ui.tableView->setModel(&model);
-    //ui.tableView->horizontalHeader()->setStretchLastSection( true );
+    ui.tableView->horizontalHeader()->setStretchLastSection( true );
 	ui.tableView->hideColumn(2);
 	
     // Sliders and Icons
@@ -110,6 +110,7 @@ void MUI::showAboutBox()
 void MUI::handleDoubleClick(const QModelIndex &index)
 {
     QString totalTime;
+	QPixmap qp;
     int row;
     
     row = index.row();
@@ -118,7 +119,7 @@ void MUI::handleDoubleClick(const QModelIndex &index)
     QString file = QVariant(index.sibling(row, 2).data()).toString();
     QString title = QVariant(index.sibling(row, 0).data()).toString();
     std::string filename = file.toStdString();
-    
+    	
     try 
 	{
 		QString msg = "<b>Welcome to MUI</b><br/>Playing: ";
@@ -128,8 +129,12 @@ void MUI::handleDoubleClick(const QModelIndex &index)
         p->renderFile(filename);		
         lenms = p->getLength();
 		
-		msg.append(title);
-		
+		msg.append(title);		
+		qp.load(":/images/images/juk.png");
+		qp = qp.scaledToHeight(64);
+		qp = qp.scaledToWidth(64);				
+		ui.labelPic->setPixmap(qp);
+			
 		try
 		{
 			tagreader.renderFile(filename);
@@ -142,16 +147,14 @@ void MUI::handleDoubleClick(const QModelIndex &index)
 			msg.append("</font><br/><font size = 4>");
 			msg.append(tag.album.c_str());
 			msg.append("</font>");
-			
+			qDebug()<<"Artfile"<<tag.artfile.c_str();
 			if(tag.artfile != "")
-			{
-				QPixmap qp;
+			{			
 				qp.load(tag.artfile.c_str());
-				qp = qp.scaledToHeight(100);
-				qp = qp.scaledToWidth(100);
+				qp = qp.scaledToHeight(64);
+				qp = qp.scaledToWidth(64);
 				ui.labelPic->setPixmap( qp );
-			}
-			wasTagged = true;		
+			}							
 			
 		}
 		catch(AudioTag::TagException &tex)
@@ -191,10 +194,9 @@ void MUI::stop()
     ui.labelTotalTime->setText("00:00");
     ui.labelNowPlaying->setText(qWelcomeString);
 	
-	if(tag.artfile != "" && wasTagged)
+	if(tag.artfile != "")
 	{
-		QDir().remove( tag.artfile.c_str() );
-		wasTagged = false;
+		QDir().remove( tag.artfile.c_str() );		
 	}
 }
 
@@ -382,6 +384,10 @@ void MUI::loadSettings()
 
 void MUI::closeEvent(QCloseEvent *event)
 {
+	if(tag.artfile != "")
+	{
+		QDir().remove( tag.artfile.c_str() );	
+	}
     saveSettings();
     event->accept();
 }

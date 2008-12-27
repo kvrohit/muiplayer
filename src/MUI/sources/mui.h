@@ -11,6 +11,7 @@
 
 #define ROWHEIGHT 21
 
+
 class MUI : public QMainWindow
 {
     Q_OBJECT
@@ -65,7 +66,6 @@ private:
 	AudioTag::TagReader tagreader;
 	AudioTag::GenericTag tag;
 	
-	bool wasTagged;
 };
 
 #endif // MUI_H
