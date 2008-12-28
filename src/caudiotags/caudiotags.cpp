@@ -26,6 +26,14 @@ void AudioTag::ID3v23TagReader::renderFile(std::string file) throw (TagException
 	char data[4], size[4], flags[2], temp;
 	unsigned int tag_size; // tag size
 	
+	// reset tag
+	tag.title = "";
+	tag.artist = "";
+	tag.album = "";
+	tag.track = 0;
+	tag.year = 0;
+	tag.artfile = "";	
+	
 	instream.open( file.c_str(), std::ios::in | std::ios::binary );
 	if( !instream.is_open() )
 		throw TagException(AudioTag::FILE_NOT_FOUND);
@@ -33,20 +41,29 @@ void AudioTag::ID3v23TagReader::renderFile(std::string file) throw (TagException
 	// read ID3 header
 	instream.read(data, 3); 	
 	if( !(data[0] == 'I' && data[1] == 'D' && data[2] == '3') )
+	{
+		instream.close();
 		throw TagException(NO_TAG);
+	}
 	
 	// read version
 	// must be 2.3.0
 	instream.read(flags, 2);	
 	if( (int)flags[0] != 3 || (int)flags[1] != 0 )
+	{
+		instream.close();
 		throw TagException(AudioTag::INVALID_TAG);
+	}
 	
 	// read flags	
 	instream.read(&temp, 1);
 	// check for extended header or experimental header
 	// and for a valid flag
 	if( temp & (1<<6) || temp & (1<<5) || temp & 0x1F) 
+	{
+		instream.close();
 		throw TagException(AudioTag::UNSUPPORTED_TAG);
+	}
 		
 	// read size of tag
 	// buggy
@@ -57,15 +74,7 @@ void AudioTag::ID3v23TagReader::renderFile(std::string file) throw (TagException
 		if( _size > 0x80 )
 			throw TagException(AudioTag::INVALID_TAG);
 		tag_size += (_size)<<(7*i);	
-	}
-	
-	// reset tag
-	tag.title = "";
-	tag.artist = "";
-	tag.album = "";
-	tag.track = 0;
-	tag.year = 0;
-	tag.artfile = "";
+	}	
 	
 	// read frame	
 	while(tag_size--)
@@ -98,9 +107,7 @@ void AudioTag::ID3v23TagReader::renderFile(std::string file) throw (TagException
 		else if( compareFrame(data, "TYER") ) // year					
 			tag.year = toUnsigned(readTXXXFrame());
 		else if( compareFrame(data, "APIC") ) // album art
-		{
 			tag.artfile = readAPICFrame();
-		}
 		else
 		{
 			// unknown/boring frame
@@ -203,7 +210,7 @@ std::string AudioTag::ID3v23TagReader::readAPICFrame()
 			bytes_read++;
 		}
 		while(temp != 0);
-	}	
+	}
 	
 	try
 	{
