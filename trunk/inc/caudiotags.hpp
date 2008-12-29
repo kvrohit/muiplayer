@@ -23,7 +23,7 @@ author: ksk
 
 namespace AudioTag
 {
-	const std::string libversion = "1.1.0";
+	const std::string libversion = "1.1.1";
 	
 	// tag descriptors
 	typedef unsigned int TAG_DESCRIPTOR;
