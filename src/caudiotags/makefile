@@ -18,7 +18,7 @@ win_lib:
 
 win_clean:
 	@echo $(MSG_CLEAN_START)
-	del $(LIB_PATH)*.o
+	rm -f $(LIB_PATH)*.o
 	@echo $(MSG_DONE)
 	
 win_debug:

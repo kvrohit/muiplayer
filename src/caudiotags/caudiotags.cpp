@@ -43,16 +43,16 @@ void AudioTag::ID3v23TagReader::renderFile(std::string file) throw (TagException
 	if( !(data[0] == 'I' && data[1] == 'D' && data[2] == '3') )
 	{
 		instream.close();
-		throw TagException(NO_TAG);
+		throw TagException(AudioTag::NO_TAG);
 	}
 	
 	// read version
-	// must be 2.3.0
+	// must be 2.3.0 or 2.4.0
 	instream.read(flags, 2);	
-	if( (int)flags[0] != 3 || (int)flags[1] != 0 )
+	if( (int)flags[0] != 3 && (int)flags[0] != 4 && (int)flags[1] != 0 )
 	{
-		instream.close();
-		throw TagException(AudioTag::INVALID_TAG);
+		//instream.close();
+		//throw TagException(AudioTag::INVALID_TAG);
 	}
 	
 	// read flags	
