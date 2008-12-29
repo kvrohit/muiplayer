@@ -4,7 +4,7 @@
 #include <QStandardItemModel>
 #include <QString>
 #include <QStandardItem>
-#include <QMessageBox>
+#include <QDebug>
 
 #include "cplaylist.hpp"
 
@@ -12,13 +12,11 @@
 #define DURATION 1
 #define FILENAME 2
 
-#define ROWHEIGHT 21
-
 class PlaylistModel : public QStandardItemModel
 {
     public:
         PlaylistModel();
-        void append(const QString &);
+        void append(const QString &, unsigned int);
         void appendPlaylist(const QString &);
         void savePlaylist(const QString &);
         void clear();

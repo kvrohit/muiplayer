@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="images" >
+    <file>images/tux.png</file>
     <file>images/add.png</file>
     <file>images/clear.png</file>
     <file>images/exit.png</file>
@@ -13,6 +14,6 @@
     <file>images/remove.png</file>
     <file>images/save.png</file>
     <file>images/time.png</file>
-    <file>images/volume.png</file>	
+    <file>images/volume.png</file>
   </qresource>
 </RCC>
