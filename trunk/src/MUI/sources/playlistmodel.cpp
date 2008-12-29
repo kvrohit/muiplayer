@@ -3,19 +3,22 @@
 PlaylistModel::PlaylistModel()
 {
     QStringList headerLabels;
-    headerLabels << "Title" << "Length" << "Filepath";    
+    headerLabels << "Songtitle" << "Duration" << "Filepath";    
     
     setHorizontalHeaderLabels(headerLabels);
 }
 
-void PlaylistModel::append(const QString &filename)
+void PlaylistModel::append(const QString &filename, unsigned int lenms)
 {
     int row = rowCount();
+    QString totalTime;
+    
     if(checkFile(filename))
     {
+        totalTime.sprintf("%02d:%02d", lenms / 1000 / 60, lenms / 1000 % 60);
         setItem(row, TITLE, new QStandardItem(getFilenameOnly(filename)));
-		setItem(row, DURATION, new QStandardItem(QString("")));
-        setItem(row, FILENAME, new QStandardItem(filename));		
+        setItem(row, DURATION, new QStandardItem(totalTime));
+        setItem(row, FILENAME, new QStandardItem(filename));
     }
 }
 
@@ -27,29 +30,21 @@ void PlaylistModel::appendPlaylist(const QString &filename)
     std::string title, filepath, file;
     
     file = filename.toStdString();
-    try
-	{
-		p.renderPlaylist(file);
-	}
-	catch(MUIPlaylist::PlaylistException &plex)
-	{
-		QString errmsg = "The playlist [";
-		errmsg.append(getFilenameOnly(filename));
-		errmsg.append("] could not be loaded, ");
-		errmsg.append(plex.what().c_str());
-		
-		QMessageBox::information(0, "Error loading playlist", errmsg);
-		return;
-	}
-    
-    while(p.getNextEntry(length, title, filepath))
-    {
-        int row = rowCount();
-        len.sprintf("%02d:%02d", length / 60, length % 60);
+    try {
+        p.renderPlaylist(file);
         
-        setItem(row, TITLE, new QStandardItem(QString::fromStdString(title)));
-        setItem(row, DURATION, new QStandardItem(len));
-        setItem(row, FILENAME, new QStandardItem(QString::fromStdString(filepath)));		
+        while(p.getNextEntry(length, title, filepath))
+        {
+            int row = rowCount();
+            len.sprintf("%02d:%02d", length / 60, length % 60);
+            
+            setItem(row, TITLE, new QStandardItem(QString::fromStdString(title)));
+            setItem(row, DURATION, new QStandardItem(len));
+            setItem(row, FILENAME, new QStandardItem(QString::fromStdString(filepath)));
+        }
+    }
+    catch(MUIPlaylist::PlaylistException &e) {
+        qDebug() << QString::fromStdString(e.what());
     }
 }
 
@@ -60,23 +55,26 @@ void PlaylistModel::savePlaylist(const QString &filename)
     int length, min, sec;
     
     file = filename.toStdString();
-    p.createPlaylist(file, false);
-        
-    for(int i=0; i<rowCount(); i++)
-    {
-        title = QVariant(item(i, TITLE)->text()).toString().toStdString();
-        len = QVariant(item(i, DURATION)->text()).toString().toStdString();
-        path = QVariant(item(i, FILENAME)->text()).toString().toStdString();
-        
-		
-		if(sscanf(len.c_str(), "%02d:%02d", &min, &sec) == 2)
-			length = (min * 60) + sec;		
-		else
-			length = 0;        
-        
-        p.writeNextEntry(length, title, path);
+    
+    try {
+        p.createPlaylist(file, false);
+            
+        for(int i=0; i<rowCount(); i++)
+        {
+            title = QVariant(item(i, TITLE)->text()).toString().toStdString();
+            len = QVariant(item(i, DURATION)->text()).toString().toStdString();
+            path = QVariant(item(i, FILENAME)->text()).toString().toStdString();
+            
+            sscanf(len.c_str(), "%d:%d", &min, &sec);
+            length = (min * 60) + sec;
+            
+            p.writeNextEntry(length, title, path);
+        }
+        p.endList();
     }
-    p.endList();
+    catch(MUIPlaylist::PlaylistException &e) {
+        qDebug() << QString::fromStdString(e.what());
+    }
 }
 
 void PlaylistModel::clear()

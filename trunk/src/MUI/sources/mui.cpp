@@ -10,8 +10,17 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
     ui.labelNowPlaying->setText(qWelcomeString);
     
     ui.tableView->setModel(&model);
-    ui.tableView->horizontalHeader()->setStretchLastSection( true );
 	ui.tableView->hideColumn(2);
+    ui.tableView->verticalHeader()->setDefaultSectionSize(21);
+    
+    // Dock Widget
+    QDockWidget *dock = new QDockWidget(this);
+    dock->setWindowTitle("Metadata");
+    mdWidget = new MetaDataWidget(dock);
+    dock->setWidget(mdWidget);
+    addDockWidget(Qt::RightDockWidgetArea, dock);
+    ui.menuView->addAction(dock->toggleViewAction());
+    // End dock widget
 	
     // Sliders and Icons
     widgetSlider = new QWidget(this);
@@ -47,9 +56,7 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
     
     p = new FMOD::Player();
     
-    slider->setMinimum(0);
-    slider->setMaximum(0);
-    
+    slider->setRange(0, 0);
     loadSettings();
     setAcceptDrops(true);
     
@@ -110,7 +117,6 @@ void MUI::showAboutBox()
 void MUI::handleDoubleClick(const QModelIndex &index)
 {
     QString totalTime;
-	QPixmap qp;
     int row;
     
     row = index.row();
@@ -129,17 +135,14 @@ void MUI::handleDoubleClick(const QModelIndex &index)
         p->renderFile(filename);		
         lenms = p->getLength();
 		
-		msg.append(title);		
-		qp.load(":/images/images/juk.png");
-		qp = qp.scaledToHeight(64);
-		qp = qp.scaledToWidth(64);				
-		ui.labelPic->setPixmap(qp);
-			
-		try
-		{
+		msg.append(title);
+		
+        try {
 			tagreader.renderFile(filename);
 			tag = tagreader.getTag();
-			msg="";
+            mdWidget->setTag(tag);
+			
+            msg="";
 			msg.append("<font size=6>");
 			msg.append(tag.artist.c_str());
 			msg.append(" / ");
@@ -147,31 +150,19 @@ void MUI::handleDoubleClick(const QModelIndex &index)
 			msg.append("</font><br/><font size = 4>");
 			msg.append(tag.album.c_str());
 			msg.append("</font>");
-			qDebug()<<"Artfile"<<tag.artfile.c_str();
-			if(tag.artfile != "")
-			{			
-				qp.load(tag.artfile.c_str());
-				qp = qp.scaledToHeight(64);
-				qp = qp.scaledToWidth(64);
-				ui.labelPic->setPixmap( qp );
-			}							
-			
+            
+            qDebug() << "Artfile" << tag.artfile.c_str();
 		}
-		catch(AudioTag::TagException &tex)
-		{
+		catch(AudioTag::TagException &tex) {
 		}
         
         totalTime.sprintf("%02d:%02d", lenms / 1000 / 60, lenms / 1000 % 60);
         ui.labelTotalTime->setText(totalTime);
         
-        QStandardItem *item = new QStandardItem(totalTime);        
-        model.setItem(row, 1, item);
-        
         slider->setMaximum(lenms);
         p->play();
         sVolume(volume);
         
-		
         ui.labelNowPlaying->setText(msg);
         ui.actionPlay->setIcon(QIcon(":/images/images/pause.png"));
         isPlaying = true;
@@ -277,7 +268,7 @@ void MUI::addMusicFiles()
         "Audio (*.mp3 *.aac *.mp4 *.ogg);;All files (*.*)");
     
     foreach(QString filename, files)
-        model.append(filename);
+        model.append(filename, p->getLengthFromName(filename.toStdString()));
 }
 
 void MUI::addMusicFiles(QList<QUrl> urls)
@@ -296,13 +287,14 @@ void MUI::addMusicFiles(QList<QUrl> urls)
             QDirIterator *it = new QDirIterator(filename, QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot,
                 QDirIterator::Subdirectories);
             while(it->hasNext()) {
-                model.append(it->next());
+                QString f = it->next();
+                model.append(f, p->getLengthFromName(f.toStdString()));
                 qApp->processEvents();
             }
         }
         else
         {
-            model.append(filename);
+            model.append(filename, p->getLengthFromName(filename.toStdString()));
         }
     }
 }

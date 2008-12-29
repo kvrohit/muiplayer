@@ -5,12 +5,10 @@
 #include "ui_mui.h"
 #include "playlistmodel.h"
 #include "volumeslider.h"
+#include "metadatawidget.h"
 
 #include "cfmod.hpp"
 #include "caudiotags.hpp"
-
-#define ROWHEIGHT 21
-
 
 class MUI : public QMainWindow
 {
@@ -48,6 +46,7 @@ private:
     QSlider *slider;
     VolumeSlider *sliderVolume;
     QWidget *widgetSlider;
+    MetaDataWidget *mdWidget;
     PlaylistModel model;
     
     int ms, lenms;
@@ -62,10 +61,9 @@ private:
     void closeEvent(QCloseEvent *);
 	
 	QString qWelcomeString;
-	
-	AudioTag::TagReader tagreader;
-	AudioTag::GenericTag tag;
-	
+            
+    AudioTag::TagReader tagreader;
+    AudioTag::GenericTag tag;
 };
 
 #endif // MUI_H
