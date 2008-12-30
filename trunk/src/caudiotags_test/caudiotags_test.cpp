@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
 		std::cout<<"Comment: "<<tag.comment<<std::endl;
 		std::cout<<"Track #"<<tag.track<<std::endl;
 		std::cout<<"Year: "<<tag.year<<std::endl;
+
 		if(tag.artfile == "")
 			std::cout<<"No album art found."<<std::endl;
 		else
