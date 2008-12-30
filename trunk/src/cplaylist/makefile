@@ -18,7 +18,7 @@ win_lib:
 
 win_clean:
 	@echo $(MSG_CLEAN_START)
-	del $(LIB_PATH)*.o
+	rm -f $(LIB_PATH)*.o
 	@echo $(MSG_DONE)
 	win_debug:
 	@echo $(MSG_DBUG_START)
@@ -40,6 +40,6 @@ linux_clean:
 linux_debug:
 	@echo $(MSG_DBUG_START)
 	@$(CXX) --version	
-	$(CXX) $(OPT) -DDBUG -D_NIX $(CPP_SRC).cpp -o $(LIB_PATH)/$(CPP_SRC)_linux.o	
+	$(CXX) $(OPT) -g -DDBUG -D_NIX $(CPP_SRC).cpp -o $(LIB_PATH)/$(CPP_SRC)_linux.o	
 	@echo $(MSG_DONE)
 
