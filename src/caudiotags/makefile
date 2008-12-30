@@ -41,6 +41,6 @@ linux_clean:
 linux_debug:
 	@echo $(MSG_DBUG_START)
 	@$(CXX) --version	
-	$(CXX) $(OPT) -DDBUG -D_NIX $(CPP_SRC).cpp -o $(LIB_PATH)/$(CPP_SRC)_linux.o	
+	$(CXX) $(OPT) -DDBUG -g -D_NIX $(CPP_SRC).cpp -o $(LIB_PATH)/$(CPP_SRC)_linux.o	
 	@echo $(MSG_DONE)
 
