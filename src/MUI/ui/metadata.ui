@@ -56,6 +56,9 @@
        <height>200</height>
       </size>
      </property>
+     <property name="pixmap" >
+      <pixmap resource="../rcc/res.qrc" >:/images/images/noart.jpg</pixmap>
+     </property>
      <property name="scaledContents" >
       <bool>true</bool>
      </property>
@@ -185,6 +188,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../rcc/res.qrc" />
+ </resources>
  <connections/>
 </ui>
