@@ -1,14 +1,20 @@
+/**
+
+caudiotags.cpp: implementation of the AudioTag component
+author: ksk
+
+*/
 #include "../../inc/caudiotags.hpp"
 
 // checks for a valid ID3 frame
 // valid ID3 frames are alphanums
-inline bool isValidFrame(char *frame)
+inline bool isValidFrame(char frame[])
 {
 	return( isalnum(frame[0]) && isalnum(frame[1]) && isalnum(frame[2]) && isalnum(frame[3]) );
 }
 
 // compares a non-terminated char* with a null-terminated char*
-inline bool compareFrame(char *data, char *frame)
+inline bool compareFrame(char data[], char frame[])
 {
 	return( data[0]==frame[0] && data[1]==frame[1] && data[2]==frame[2] && data[3]==frame[3] );
 }
@@ -24,7 +30,12 @@ unsigned int toUnsigned(std::string data)
 void AudioTag::ID3v23TagReader::renderFile(std::string file) throw (TagException)
 {
 	char data[4], size[4], flags[2], temp;
-	unsigned int tag_size; // tag size
+	unsigned int tag_size = 0; // tag size
+	
+	// ID3v2.3 frames
+	char FRAME_COMM[] = "COMM", FRAME_TALB[] = "TALB", FRAME_TPE1[] = "TPE1",
+	     FRAME_TIT2[] = "TIT2", FRAME_TRCK[] = "TRCK", FRAME_TYER[] = "TYER",
+	     FRAME_APIC[] = "APIC";
 	
 	// reset tag
 	tag.title = "";
@@ -51,8 +62,8 @@ void AudioTag::ID3v23TagReader::renderFile(std::string file) throw (TagException
 	instream.read(flags, 2);	
 	if( (int)flags[0] != 3 && (int)flags[0] != 4 && (int)flags[1] != 0 )
 	{
-		//instream.close();
-		//throw TagException(AudioTag::INVALID_TAG);
+		instream.close();
+		throw TagException(AudioTag::INVALID_TAG);
 	}
 	
 	// read flags	
@@ -68,11 +79,14 @@ void AudioTag::ID3v23TagReader::renderFile(std::string file) throw (TagException
 	// read size of tag
 	// buggy
 	instream.read(size, 4); 
-	for(int i=3;i>=0;i--)
+	for(int i=3; i>=0; i--)
 	{	
 		unsigned char _size = (unsigned char)size[i];
 		if( _size > 0x80 )
+		{
+		    instream.close();
 			throw TagException(AudioTag::INVALID_TAG);
+		}
 		tag_size += (_size)<<(7*i);	
 	}	
 	
@@ -87,26 +101,26 @@ void AudioTag::ID3v23TagReader::renderFile(std::string file) throw (TagException
 		
 		// calculate frame size in bytes
 		frame_size = 0;
-		for(int i=0;i<=3;i++)		
+		for(int i=0; i<=3; i++)		
 		{
 			unsigned char _size = (unsigned char) size[i];
 			frame_size |= (_size)<<(8 * (3-i));		
 		}
 		
 		// process frame
-		if( compareFrame(data, "COMM") ) // comment
+		if( compareFrame(data, FRAME_COMM) ) // comment
 			tag.comment = readCOMMFrame();
-		else if( compareFrame(data, "TALB") ) // album
+		else if( compareFrame(data, FRAME_TALB) ) // album
 			tag.album = readTXXXFrame();
-		else if( compareFrame(data, "TPE1") ) // artist
+		else if( compareFrame(data, FRAME_TPE1) ) // artist
 			tag.artist = readTXXXFrame();
-		else if( compareFrame(data, "TIT2") ) // title
+		else if( compareFrame(data, FRAME_TIT2) ) // title
 			tag.title = readTXXXFrame();
-		else if( compareFrame(data, "TRCK") ) // track
+		else if( compareFrame(data, FRAME_TRCK) ) // track
 			tag.track = toUnsigned(readTXXXFrame());		
-		else if( compareFrame(data, "TYER") ) // year					
+		else if( compareFrame(data, FRAME_TYER) ) // year					
 			tag.year = toUnsigned(readTXXXFrame());
-		else if( compareFrame(data, "APIC") ) // album art
+		else if( compareFrame(data, FRAME_APIC) ) // album art
 			tag.artfile = readAPICFrame();
 		else
 		{
@@ -139,7 +153,7 @@ std::string AudioTag::ID3v23TagReader::readCOMMFrame()
 	
 	try
 	{
-		comm = new char[frame_size-6];
+		comm = new char[frame_size - 5 + 1];
 	}
 	catch(std::bad_alloc &ba)
 	{
@@ -147,21 +161,20 @@ std::string AudioTag::ID3v23TagReader::readCOMMFrame()
 		while(frame_size--)
 			instream.read(&temp, 1);
 		return "";
-
 	}	
 	
-	instream.read(comm, frame_size-5);
-	comm[frame_size-5]='\0';
+	instream.read(comm, frame_size - 5);
+	comm[frame_size - 5]='\0';
 	
 	std::string comment(comm);
-	delete comm;
+	delete []comm;
 	
 	return comment;
 }
 
 std::string AudioTag::ID3v23TagReader::readTXXXFrame()
 {
-	char temp, *data;	
+    char temp, *data;	
 	instream.read(&temp, 1); //text-encoding
 	
 	try
@@ -176,11 +189,11 @@ std::string AudioTag::ID3v23TagReader::readTXXXFrame()
 		return "";
 	}
 	
-	instream.read(data, frame_size-1);
-	data[frame_size-1]='\0';
+	instream.read(data, frame_size - 1);
+	data[frame_size - 1]='\0';
 	
 	std::string tx_data(data);
-	delete data;
+	delete []data;
 	
 	return tx_data;	
 }
@@ -230,7 +243,7 @@ std::string AudioTag::ID3v23TagReader::readAPICFrame()
 	
 	srand( time(NULL) );
 	unsigned int _random_num = rand();
-	char filename[sizeof(unsigned int)*8 + 5];
+	char filename[20];
 	sprintf(filename, "%u.jpg", _random_num);
 	
 	std::ofstream out(filename, std::ios::out | std::ios::binary );
@@ -238,7 +251,7 @@ std::string AudioTag::ID3v23TagReader::readAPICFrame()
 	out.write( picture_data, frame_size - 14);
 	out.close();
 	
-	delete picture_data;
+	delete []picture_data;
 	return filename;
 }
 
