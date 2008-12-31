@@ -40,7 +40,7 @@ linux_clean:
 linux_debug:
 	@echo $(MSG_DBUG_START)
 	@$(CXX) --version	
-	$(CXX) $(OPT) -DDBUG $(CPP_SRC).cpp -o $(LIB_PATH)/$(CPP_SRC)_linux.o	
+	$(CXX) $(OPT) -g $(CPP_SRC).cpp -o $(LIB_PATH)/$(CPP_SRC)_linux.o	
 	@echo $(MSG_DONE)
 
 	
