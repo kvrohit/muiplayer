@@ -13,7 +13,6 @@ int main(int argc, char **argv)
 	FMOD::Player p;
 	int i, c;
 	float pos, len;   
-	float wavedata[20];
 	
 	if( argc != 2 )
 	{
@@ -46,7 +45,6 @@ int main(int argc, char **argv)
 			
 			for(i=0;i<50-c-1;i++) std::cout<<"-";
 			std::cout<<"] "<<c*2<<"%\r"; 
-			
 			#ifdef _WIN
 			Sleep( 1000 );
 			#endif
@@ -55,6 +53,7 @@ int main(int argc, char **argv)
 			sleep( 1 );
 			#endif
 		}
+		p.stop();
 		std::cout<<std::endl<<"Done."<<std::endl;
 	}
 	catch(FMOD::FMODException &fmex)
