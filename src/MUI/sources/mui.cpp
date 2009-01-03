@@ -154,7 +154,9 @@ void MUI::handleDoubleClick(const QModelIndex &index)
 			qDebug() << "Title: "<<tag.title.c_str();
 			qDebug() << "Artist: "<<tag.artist.c_str();
 			qDebug() << "Album: "<<tag.album.c_str();
-            qDebug() << "Artfile" << tag.artfile.c_str();
+            qDebug() << "Artfile: " << tag.artfile.c_str();
+			qDebug() << "Track: "<<tag.track;
+			qDebug() << "Year: "<<tag.year;
 		}
 		catch(AudioTag::TagException &tex) {
 		}

@@ -9,6 +9,6 @@ Support functions for MUI
 
 #include<QString>
 
-QString convertToUnicode(std::string);
+QString convertToUnicode(const std::string);
 
 #endif /* __SUPPORT_H */
