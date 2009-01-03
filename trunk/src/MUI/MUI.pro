@@ -36,7 +36,7 @@ win32 {
   LIBS += -L../../lib -lfmodex
   OBJECTS += ../../lib/cfmod.o \
              ../../lib/cplaylist.o \
-             ../../lib/caudiotags.o    
+             ../../lib/caudiotags.o    	
 } else {
   LIBS += -L/usr/lib -lfmodex
   OBJECTS += ../../lib/cfmod_linux.o \
