@@ -23,7 +23,7 @@ author: ksk
 
 namespace AudioTag
 {
-	const std::string libversion = "1.2.0";
+	const std::string libversion = "1.2.2";
 		
 	// Generic Tag Structure
 	typedef struct __generic_tag
@@ -96,7 +96,7 @@ namespace AudioTag
 			std::string readCOMMFrame();			
 			std::string readAPICFrame();
 			
-			unsigned int frame_size;
+			unsigned int frame_size, tag_size;
 			
 		public:
 			ID3v23TagReader(): tag(){ }					
