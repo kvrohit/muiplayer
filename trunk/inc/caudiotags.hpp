@@ -23,25 +23,16 @@ author: ksk
 
 namespace AudioTag
 {
-	const std::string libversion = "1.1.2";
-	
-	// tag descriptors
-	typedef unsigned int TAG_DESCRIPTOR;
-	const TAG_DESCRIPTOR _TITLE   = 0x00000001;
-	const TAG_DESCRIPTOR ARTIST  = 0x00000002;
-	const TAG_DESCRIPTOR ALBUM   = 0x00000004;
-	const TAG_DESCRIPTOR COMMENT = 0x00000008;
-	const TAG_DESCRIPTOR ARTFILE = 0x00000010;
-	const TAG_DESCRIPTOR TRACK   = 0x00000020;
-	const TAG_DESCRIPTOR YEAR	 = 0x00000040;
-	
+	const std::string libversion = "1.2.0";
+		
 	// Generic Tag Structure
 	typedef struct __generic_tag
 	{
 		std::string title, artist, album;
 		std::string comment;
 		std::string artfile;
-		unsigned int track, year;
+		unsigned int track, year;		
+		
 		
 		__generic_tag(): title(""), artist(""), album(""), comment(""), artfile(""), track(0), year(0) { }
 			
@@ -87,10 +78,10 @@ namespace AudioTag
 			std::ifstream instream;
 			
 		public:
-			virtual void renderFile(std::string) = 0;
-			virtual GenericTag getTag() = 0;
-			virtual std::string getTag(TAG_DESCRIPTOR) = 0;
 			virtual ~__generic_tag_reader() { }
+			
+			virtual void renderFile(std::string) = 0;
+			virtual GenericTag getTag() = 0;		
 	};
 	
 	// ID3 tag reader class	
@@ -112,8 +103,7 @@ namespace AudioTag
 			~ID3v23TagReader() { }
 			
 			void renderFile(std::string) throw(TagException);			
-			GenericTag getTag();
-			std::string getTag(TAG_DESCRIPTOR);
+			GenericTag getTag();			
 			
 	};
 	
@@ -121,14 +111,12 @@ namespace AudioTag
 	class TagReader
 	{
 		private:
-			ID3v23TagReader id3v23_reader;				
+			ID3v23TagReader id3v23_reader;
 			__generic_tag_reader *reader;
 		
 		public:		
 			void renderFile(std::string) throw(TagException);
 			GenericTag getTag();
-			std::string getTag(TAG_DESCRIPTOR);
-		
 	};
 	
 }
