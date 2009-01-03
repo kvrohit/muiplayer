@@ -13,7 +13,8 @@ HEADERS     +=      sources/mui.h \
                     sources/about.h \
                     sources/playlistmodel.h \
                     sources/volumeslider.h \
-                    sources/metadatawidget.h
+                    sources/metadatawidget.h \
+					sources/support.h
 
 FORMS       +=      ui/mui.ui \
                     ui/about.ui \
@@ -24,7 +25,8 @@ SOURCES     +=      sources/main.cpp \
                     sources/about.cpp \
                     sources/playlistmodel.cpp \
                     sources/volumeslider.cpp \
-                    sources/metadatawidget.cpp
+                    sources/metadatawidget.cpp \
+					sources/support.cpp
                     
 RESOURCES += rcc/res.qrc
 CONFIG += release
@@ -34,7 +36,7 @@ win32 {
   LIBS += -L../../lib -lfmodex
   OBJECTS += ../../lib/cfmod.o \
              ../../lib/cplaylist.o \
-             ../../lib/caudiotags.o  
+             ../../lib/caudiotags.o    
 } else {
   LIBS += -L/usr/lib -lfmodex
   OBJECTS += ../../lib/cfmod_linux.o \
