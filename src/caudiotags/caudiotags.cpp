@@ -166,7 +166,7 @@ std::string AudioTag::ID3v23TagReader::readCOMMFrame()
 	instream.read(comm, frame_size - 5);
 	comm[frame_size - 5]='\0';
 	
-	std::string comment(comm);
+	std::string comment(comm, frame_size - 5 + 1);
 	delete []comm;
 	
 	return comment;
@@ -187,12 +187,11 @@ std::string AudioTag::ID3v23TagReader::readTXXXFrame()
 		while(frame_size--)
 			instream.read(&temp, 1);
 		return "";
-	}
-	
+	}	
 	instream.read(data, frame_size - 1);
 	data[frame_size - 1]='\0';
 	
-	std::string tx_data(data);
+	std::string tx_data(data, frame_size);		
 	delete []data;
 	
 	return tx_data;	
@@ -255,11 +254,6 @@ std::string AudioTag::ID3v23TagReader::readAPICFrame()
 	return filename;
 }
 
-std::string AudioTag::ID3v23TagReader::getTag(AudioTag::TAG_DESCRIPTOR d)
-{
-	return "";
-}
-
 AudioTag::GenericTag AudioTag::ID3v23TagReader::getTag()
 {
 	return tag;
@@ -291,10 +285,5 @@ void AudioTag::TagReader::renderFile(std::string file) throw (TagException)
 AudioTag::GenericTag AudioTag::TagReader::getTag()
 {
 	return reader->getTag();
-}
-
-std::string AudioTag::TagReader::getTag(TAG_DESCRIPTOR td)
-{
-	return reader->getTag(td);
 }
 
