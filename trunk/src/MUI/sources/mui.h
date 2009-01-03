@@ -10,6 +10,8 @@
 #include "cfmod.hpp"
 #include "caudiotags.hpp"
 
+#include "support.h"
+
 class MUI : public QMainWindow
 {
     Q_OBJECT

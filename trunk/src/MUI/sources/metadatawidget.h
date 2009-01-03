@@ -6,6 +6,8 @@
 #include "ui_metadata.h"
 #include "caudiotags.hpp"
 
+#include "support.h"
+
 class MetaDataWidget : public QWidget
 {
     Q_OBJECT

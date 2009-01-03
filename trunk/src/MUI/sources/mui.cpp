@@ -144,13 +144,16 @@ void MUI::handleDoubleClick(const QModelIndex &index)
 			
             msg="";
 			msg.append("<font size=6>");
-			msg.append(tag.artist.c_str());
+			msg.append(convertToUnicode(tag.artist));
 			msg.append(" / ");
-			msg.append(tag.title.c_str());
+			msg.append(convertToUnicode(tag.title));
 			msg.append("</font><br/><font size = 4>");
-			msg.append(tag.album.c_str());
+			msg.append(convertToUnicode(tag.album));
 			msg.append("</font>");
             
+			qDebug() << "Title: "<<tag.title.c_str();
+			qDebug() << "Artist: "<<tag.artist.c_str();
+			qDebug() << "Album: "<<tag.album.c_str();
             qDebug() << "Artfile" << tag.artfile.c_str();
 		}
 		catch(AudioTag::TagException &tex) {
