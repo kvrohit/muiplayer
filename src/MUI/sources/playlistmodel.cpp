@@ -15,10 +15,12 @@ void PlaylistModel::append(const QString &filename, unsigned int lenms)
     
     if(checkFile(filename))
     {
+        qDebug() << "Adding file : " << filename;
         totalTime.sprintf("%02d:%02d", lenms / 1000 / 60, lenms / 1000 % 60);
         setItem(row, TITLE, new QStandardItem(getFilenameOnly(filename)));
         setItem(row, DURATION, new QStandardItem(totalTime));
         setItem(row, FILENAME, new QStandardItem(filename));
+        qDebug() << "File Added";
     }
 }
 

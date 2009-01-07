@@ -14,11 +14,13 @@ HEADERS     +=      sources/mui.h \
                     sources/playlistmodel.h \
                     sources/volumeslider.h \
                     sources/metadatawidget.h \
-					sources/support.h
+					sources/support.h \
+                    sources/errorlog.h
 
 FORMS       +=      ui/mui.ui \
                     ui/about.ui \
-                    ui/metadata.ui
+                    ui/metadata.ui \
+                    ui/errorlog.ui
 
 SOURCES     +=      sources/main.cpp \
                     sources/mui.cpp \
@@ -26,7 +28,8 @@ SOURCES     +=      sources/main.cpp \
                     sources/playlistmodel.cpp \
                     sources/volumeslider.cpp \
                     sources/metadatawidget.cpp \
-					sources/support.cpp
+					sources/support.cpp \
+                    sources/errorlog.cpp
                     
 RESOURCES += rcc/res.qrc
 CONFIG += release

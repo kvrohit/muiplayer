@@ -15,6 +15,7 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
     
     // Dock Widget
     QDockWidget *dock = new QDockWidget(this);
+    dock->setObjectName("dock");
     dock->setWindowTitle("Metadata");
     mdWidget = new MetaDataWidget(dock);
     dock->setWidget(mdWidget);
@@ -82,6 +83,8 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
         this, SLOT(clear()));
     connect(ui.actionAbout, SIGNAL(triggered()),
         this, SLOT(showAboutBox()));
+    connect(ui.actionErrorLog, SIGNAL(triggered()),
+        this, SLOT(showErrorDialog()));
     
     connect(ui.buttonAdd, SIGNAL(clicked()),
         this, SLOT(addMusicFiles()));
@@ -112,6 +115,11 @@ void MUI::showAboutBox()
 {
     About *a = new About();
     a->show();
+}
+
+void MUI::showErrorDialog()
+{
+    log.show();
 }
 
 void MUI::handleDoubleClick(const QModelIndex &index)
@@ -159,6 +167,7 @@ void MUI::handleDoubleClick(const QModelIndex &index)
 			qDebug() << "Year: "<<tag.year;
 		}
 		catch(AudioTag::TagException &tex) {
+            log.append(tex.what());
 		}
         
         totalTime.sprintf("%02d:%02d", lenms / 1000 / 60, lenms / 1000 % 60);
@@ -174,7 +183,7 @@ void MUI::handleDoubleClick(const QModelIndex &index)
         timer->start();
     }
     catch(FMOD::FMODException &e) {
-        qDebug() << "Render Error";
+        log.append(e.what());
     }
 }
 
@@ -296,6 +305,7 @@ void MUI::addMusicFiles(QList<QUrl> urls)
                 model.append(f, p->getLengthFromName(f.toStdString()));
                 qApp->processEvents();
             }
+            delete it;
         }
         else
         {
@@ -344,14 +354,13 @@ void MUI::sMove(int value)
 
 void MUI::sVolume(int value)
 {
-    qDebug() << value;
     try {
         float v = value / 100.00;
         volume = value;
         p->setVolume(v);
     }
     catch(FMOD::FMODException &e) {
-        qDebug() << "Volume Set Error";
+        log.append(e.what());
     }
 }
 
@@ -366,8 +375,8 @@ void MUI::loadSettings()
     QSettings settings("BurningMedia", "MUI");
     
     settings.beginGroup("MainWindow");
-    resize(settings.value("size", QSize(400, 400)).toSize());
-    move(settings.value("pos", QPoint(200, 200)).toPoint());
+    restoreState(settings.value("state").toByteArray());
+    restoreGeometry(settings.value("geometry").toByteArray());
     volume = settings.value("vol", 100).toInt();
     sliderVolume->setValue(volume);
     settings.endGroup();
@@ -394,8 +403,8 @@ void MUI::saveSettings()
     QSettings settings("BurningMedia", "MUI");
     
     settings.beginGroup("MainWindow");
-    settings.setValue("size", size());
-    settings.setValue("pos", pos());
+    settings.setValue("state", saveState());
+    settings.setValue("geometry", saveGeometry());
     settings.setValue("vol", sliderVolume->value());
     settings.endGroup();
     
