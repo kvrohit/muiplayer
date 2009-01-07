@@ -6,11 +6,14 @@
 #include "playlistmodel.h"
 #include "volumeslider.h"
 #include "metadatawidget.h"
+#include "errorlog.h"
 
 #include "cfmod.hpp"
 #include "caudiotags.hpp"
 
 #include "support.h"
+
+const QString muiversion = "0.0.2";
 
 class MUI : public QMainWindow
 {
@@ -24,9 +27,10 @@ private slots:
     void handleDoubleClick(const QModelIndex &);
     void addMusicFiles();
     void addMusicFiles(QList<QUrl>);
+    void showErrorDialog();
     void displayTime();
     void openPlaylist();
-	void savePlaylist();
+    void savePlaylist();
     void clear();
     void stop();
     void play();
@@ -50,6 +54,7 @@ private:
     QWidget *widgetSlider;
     MetaDataWidget *mdWidget;
     PlaylistModel model;
+    ErrorLog log;
     
     int ms, lenms;
     int currentRow;
@@ -61,11 +66,10 @@ private:
     void loadSettings();
     void saveSettings();
     void closeEvent(QCloseEvent *);
-	
-	QString qWelcomeString;
+    
+    QString qWelcomeString;
             
     AudioTag::TagReader tagreader;
     AudioTag::GenericTag tag;
 };
-
 #endif // MUI_H

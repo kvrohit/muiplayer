@@ -6,8 +6,7 @@
 #include "cfmod.hpp"
 #include "cplaylist.hpp"
 #include "caudiotags.hpp"
-
-#define ROWHEIGHT 21
+#include "mui.h"
 
 class About : public QWidget
 {
