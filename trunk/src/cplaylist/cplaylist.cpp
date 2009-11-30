@@ -93,6 +93,12 @@ bool MUIPlaylist::Playlist::hasNextEntry()
 	return !instream.eof();
 }
 
+void MUIPlaylist::Playlist::endList()
+{
+	outstream.close();
+}
+
+
 /* M3U Specific */
 bool MUIPlaylist::Playlist::getNextM3UEntry(int &length, std::string &title, std::string &path)
 {
@@ -133,13 +139,7 @@ void MUIPlaylist::Playlist::writeNextM3UEntry(int &length, std::string &title, s
 	outstream<<path.c_str()<<std::endl;
 }
 
-void MUIPlaylist::Playlist::endList()
-{
-	outstream.close();
-}
-
 /* PLS Specific */
-
 bool MUIPlaylist::Playlist::getNextPLSEntry(int &length, std::string &title, std::string &path)
 {
 	return false;
