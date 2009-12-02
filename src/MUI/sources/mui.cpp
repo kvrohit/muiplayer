@@ -148,7 +148,7 @@ void MUI::handleDoubleClick(const QModelIndex &index)
         try {
 			tagreader.renderFile(filename);
 			tag = tagreader.getTag();
-            mdWidget->setTag(tag);
+            mdWidget->setTag(tag, filename);
 			
             msg="";
 			msg.append("<font size=6>");
