@@ -274,7 +274,7 @@ void AudioTag::TagReader::renderFile(std::string file) throw (TagException)
 	
 	std::string ext = file.substr(file.length()-3);
 	
-	if( 0 == stricmp(ext.c_str(), "mp3") )
+	if( 0 == strcmp(ext.c_str(), "mp3") )
 		reader = &id3v23_reader;
 	else
 		throw TagException(AudioTag::UNSUPPORTED_TAG);

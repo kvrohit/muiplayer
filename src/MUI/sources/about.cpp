@@ -10,9 +10,7 @@ About::About()
 	componentHeaderLabels << "Component" << "Version";
 	model.setHorizontalHeaderLabels(componentHeaderLabels);
     
-    ui.tableComponents->setModel(&model);
-	ui.tableComponents->horizontalHeader()->setStretchLastSection( true );
-    ui.tableComponents->verticalHeader()->setDefaultSectionSize(21);
+    ui.treeView->setModel(&model);
 	
     // base
 	model.setItem(0, 0, new QStandardItem("MUI base"));

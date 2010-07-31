@@ -1,10 +1,11 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>MUIClass</class>
- <widget class="QMainWindow" name="MUIClass" >
-  <property name="windowModality" >
+ <widget class="QMainWindow" name="MUIClass">
+  <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>
-  <property name="geometry" >
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -12,73 +13,77 @@
     <height>527</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>MUI</string>
   </property>
-  <widget class="QWidget" name="centralWidget" >
-   <layout class="QHBoxLayout" name="horizontalLayout_3" >
+  <property name="windowIcon">
+   <iconset resource="../rcc/res.qrc">
+    <normaloff>:/images/images/juk.png</normaloff>:/images/images/juk.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
     <item>
-     <widget class="QWidget" native="1" name="widget" >
-      <layout class="QVBoxLayout" name="verticalLayout" >
-       <property name="leftMargin" >
+     <widget class="QWidget" name="widget" native="true">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="leftMargin">
         <number>0</number>
        </property>
-       <property name="topMargin" >
+       <property name="topMargin">
         <number>2</number>
        </property>
-       <property name="rightMargin" >
+       <property name="rightMargin">
         <number>0</number>
        </property>
-       <property name="bottomMargin" >
+       <property name="bottomMargin">
         <number>0</number>
        </property>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout" >
+        <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QLabel" name="labelPic" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+          <widget class="QLabel" name="labelPic">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="frameShadow" >
+           <property name="frameShadow">
             <enum>QFrame::Sunken</enum>
            </property>
-           <property name="text" >
+           <property name="text">
             <string/>
            </property>
-           <property name="pixmap" >
-            <pixmap resource="../rcc/res.qrc" >:/images/images/juk.png</pixmap>
+           <property name="pixmap">
+            <pixmap resource="../rcc/res.qrc">:/images/images/juk.png</pixmap>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="labelNowPlaying" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+          <widget class="QLabel" name="labelNowPlaying">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="font" >
+           <property name="font">
             <font>
              <weight>50</weight>
              <italic>false</italic>
              <bold>false</bold>
             </font>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>Now Playing</string>
            </property>
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_2" >
-           <property name="orientation" >
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>30</width>
              <height>20</height>
@@ -87,33 +92,33 @@
           </spacer>
          </item>
          <item>
-          <widget class="QLabel" name="labelTime" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+          <widget class="QLabel" name="labelTime">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="font" >
+           <property name="font">
             <font>
              <italic>false</italic>
             </font>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>00:00</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_2" >
-           <property name="text" >
+          <widget class="QLabel" name="label_2">
+           <property name="text">
             <string>of</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="labelTotalTime" >
-           <property name="text" >
+          <widget class="QLabel" name="labelTotalTime">
+           <property name="text">
             <string>00:00</string>
            </property>
           </widget>
@@ -121,54 +126,45 @@
         </layout>
        </item>
        <item>
-        <widget class="QTabWidget" name="tabPlaylist" >
-         <property name="tabPosition" >
+        <widget class="QTabWidget" name="tabPlaylist">
+         <property name="tabPosition">
           <enum>QTabWidget::North</enum>
          </property>
-         <property name="tabShape" >
+         <property name="tabShape">
           <enum>QTabWidget::Rounded</enum>
          </property>
-         <property name="currentIndex" >
+         <property name="currentIndex">
           <number>0</number>
          </property>
-         <widget class="QWidget" name="tab" >
-          <attribute name="title" >
+         <widget class="QWidget" name="tab">
+          <attribute name="title">
            <string>Playlist</string>
           </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_2" >
+          <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <widget class="QTableView" name="tableView" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="MinimumExpanding" hsizetype="Minimum" >
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="editTriggers" >
+            <widget class="QTreeView" name="treeView">
+             <property name="editTriggers">
               <set>QAbstractItemView::NoEditTriggers</set>
              </property>
-             <property name="alternatingRowColors" >
+             <property name="alternatingRowColors">
               <bool>true</bool>
              </property>
-             <property name="selectionMode" >
-              <enum>QAbstractItemView::SingleSelection</enum>
+             <property name="indentation">
+              <number>0</number>
              </property>
-             <property name="selectionBehavior" >
-              <enum>QAbstractItemView::SelectRows</enum>
-             </property>
-             <property name="showGrid" >
-              <bool>false</bool>
+             <property name="uniformRowHeights">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2" >
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
-              <spacer name="horizontalSpacer" >
-               <property name="orientation" >
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
-               <property name="sizeHint" stdset="0" >
+               <property name="sizeHint" stdset="0">
                 <size>
                  <width>40</width>
                  <height>20</height>
@@ -177,20 +173,20 @@
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="buttonAdd" >
-               <property name="icon" >
-                <iconset resource="../rcc/res.qrc" >
+              <widget class="QPushButton" name="buttonAdd">
+               <property name="icon">
+                <iconset resource="../rcc/res.qrc">
                  <normaloff>:/images/images/add.png</normaloff>:/images/images/add.png</iconset>
                </property>
-               <property name="shortcut" >
+               <property name="shortcut">
                 <string>+</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="buttonRemove" >
-               <property name="icon" >
-                <iconset resource="../rcc/res.qrc" >
+              <widget class="QPushButton" name="buttonRemove">
+               <property name="icon">
+                <iconset resource="../rcc/res.qrc">
                  <normaloff>:/images/images/remove.png</normaloff>:/images/images/remove.png</iconset>
                </property>
               </widget>
@@ -206,156 +202,159 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menuBar" >
-   <property name="geometry" >
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
      <width>522</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuHelp" >
-    <property name="title" >
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionAbout" />
+    <addaction name="actionAbout"/>
    </widget>
-   <widget class="QMenu" name="menuFile" >
-    <property name="title" >
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionExit" />
+    <addaction name="actionExit"/>
    </widget>
-   <widget class="QMenu" name="menuPlaylist" >
-    <property name="title" >
+   <widget class="QMenu" name="menuPlaylist">
+    <property name="title">
      <string>Playlist</string>
     </property>
-    <addaction name="actionOpen" />
-    <addaction name="actionSave" />
-    <addaction name="separator" />
-    <addaction name="actionClear" />
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="separator"/>
+    <addaction name="actionClear"/>
    </widget>
-   <widget class="QMenu" name="menuView" >
-    <property name="title" >
+   <widget class="QMenu" name="menuView">
+    <property name="title">
      <string>View</string>
     </property>
-    <addaction name="actionErrorLog" />
-    <addaction name="separator" />
+    <addaction name="actionEditStyleSheet"/>
+    <addaction name="actionErrorLog"/>
+    <addaction name="separator"/>
    </widget>
-   <addaction name="menuFile" />
-   <addaction name="menuPlaylist" />
-   <addaction name="menuView" />
-   <addaction name="menuHelp" />
+   <addaction name="menuFile"/>
+   <addaction name="menuPlaylist"/>
+   <addaction name="menuView"/>
+   <addaction name="menuHelp"/>
   </widget>
-  <widget class="QToolBar" name="toolBar" >
-   <property name="windowTitle" >
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
     <string>Player Controls</string>
    </property>
-   <property name="allowedAreas" >
+   <property name="allowedAreas">
     <set>Qt::BottomToolBarArea|Qt::TopToolBarArea</set>
    </property>
-   <property name="iconSize" >
+   <property name="iconSize">
     <size>
      <width>24</width>
      <height>24</height>
     </size>
    </property>
-   <attribute name="toolBarArea" >
+   <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
-   <attribute name="toolBarBreak" >
+   <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionPrevious" />
-   <addaction name="actionPlay" />
-   <addaction name="actionNext" />
-   <addaction name="separator" />
+   <addaction name="actionPrevious"/>
+   <addaction name="actionPlay"/>
+   <addaction name="actionNext"/>
+   <addaction name="separator"/>
   </widget>
-  <action name="actionAbout" >
-   <property name="icon" >
-    <iconset resource="../rcc/res.qrc" >
+  <action name="actionAbout">
+   <property name="icon">
+    <iconset resource="../rcc/res.qrc">
      <normaloff>:/images/images/help.png</normaloff>:/images/images/help.png</iconset>
    </property>
-   <property name="text" >
+   <property name="text">
     <string>About</string>
    </property>
   </action>
-  <action name="actionExit" >
-   <property name="icon" >
-    <iconset resource="../rcc/res.qrc" >
+  <action name="actionExit">
+   <property name="icon">
+    <iconset resource="../rcc/res.qrc">
      <normaloff>:/images/images/exit.png</normaloff>:/images/images/exit.png</iconset>
    </property>
-   <property name="text" >
+   <property name="text">
     <string>Exit</string>
    </property>
   </action>
-  <action name="actionOpen" >
-   <property name="icon" >
-    <iconset resource="../rcc/res.qrc" >
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="../rcc/res.qrc">
      <normaloff>:/images/images/open.png</normaloff>:/images/images/open.png</iconset>
    </property>
-   <property name="text" >
+   <property name="text">
     <string>Open...</string>
    </property>
   </action>
-  <action name="actionClear" >
-   <property name="icon" >
-    <iconset resource="../rcc/res.qrc" >
+  <action name="actionClear">
+   <property name="icon">
+    <iconset resource="../rcc/res.qrc">
      <normaloff>:/images/images/clear.png</normaloff>:/images/images/clear.png</iconset>
    </property>
-   <property name="text" >
+   <property name="text">
     <string>Clear</string>
    </property>
   </action>
-  <action name="actionSave" >
-   <property name="icon" >
-    <iconset resource="../rcc/res.qrc" >
+  <action name="actionSave">
+   <property name="icon">
+    <iconset resource="../rcc/res.qrc">
      <normaloff>:/images/images/save.png</normaloff>:/images/images/save.png</iconset>
    </property>
-   <property name="text" >
+   <property name="text">
     <string>Save...</string>
    </property>
   </action>
-  <action name="actionPlay" >
-   <property name="icon" >
-    <iconset resource="../rcc/res.qrc" >
+  <action name="actionPlay">
+   <property name="icon">
+    <iconset resource="../rcc/res.qrc">
      <normaloff>:/images/images/play.png</normaloff>:/images/images/play.png</iconset>
    </property>
-   <property name="text" >
+   <property name="text">
     <string>Play</string>
    </property>
   </action>
-  <action name="actionNext" >
-   <property name="icon" >
-    <iconset resource="../rcc/res.qrc" >
+  <action name="actionNext">
+   <property name="icon">
+    <iconset resource="../rcc/res.qrc">
      <normaloff>:/images/images/next.png</normaloff>:/images/images/next.png</iconset>
    </property>
-   <property name="text" >
+   <property name="text">
     <string>Next</string>
    </property>
   </action>
-  <action name="actionPrevious" >
-   <property name="icon" >
-    <iconset resource="../rcc/res.qrc" >
+  <action name="actionPrevious">
+   <property name="icon">
+    <iconset resource="../rcc/res.qrc">
      <normaloff>:/images/images/previous.png</normaloff>:/images/images/previous.png</iconset>
    </property>
-   <property name="text" >
+   <property name="text">
     <string>Previous</string>
    </property>
   </action>
-  <action name="actionErrorLog" >
-   <property name="text" >
+  <action name="actionErrorLog">
+   <property name="text">
     <string>Error Log...</string>
    </property>
   </action>
+  <action name="actionEditStyleSheet">
+   <property name="text">
+    <string>Edit Style Sheet...</string>
+   </property>
+  </action>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="../rcc/res.qrc" />
-  <include location="../rcc/res.qrc" />
-  <include location="../rcc/res.qrc" />
-  <include location="../rcc/res.qrc" />
+  <include location="../rcc/res.qrc"/>
  </resources>
  <connections/>
 </ui>

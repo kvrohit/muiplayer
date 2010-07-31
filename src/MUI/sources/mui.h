@@ -7,6 +7,7 @@
 #include "volumeslider.h"
 #include "metadatawidget.h"
 #include "errorlog.h"
+#include "editstyle.h"
 
 #include "cfmod.hpp"
 #include "caudiotags.hpp"
@@ -40,6 +41,7 @@ private slots:
     void sFreeze();
     void sMove(int);
     void sVolume(int);
+    void editStyleSheet();
     
     void showAboutBox();
 
@@ -66,6 +68,7 @@ private:
     void loadSettings();
     void saveSettings();
     void closeEvent(QCloseEvent *);
+    void setupSignalsAndSlots();
     
     QString qWelcomeString;
             

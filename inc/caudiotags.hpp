@@ -15,6 +15,7 @@ author: ksk
 #include<cstdlib>
 #include<ctime>
 #include<new>
+#include<cstring>
 
 #ifdef _NIX
 	#include<strings.h>

@@ -1,50 +1,54 @@
-#
 # MUI QT PROJECT FILE
 # Modify this if new project files are added
-#
-
 TEMPLATE = app
 TARGET = 
-DEPENDPATH += . rcc sources ui
-INCLUDEPATH += . ../../inc
+DEPENDPATH += . \
+    rcc \
+    sources \
+    ui
+INCLUDEPATH += . \
+    ../../inc
 
 # Input
-HEADERS     +=      sources/mui.h \
-                    sources/about.h \
-                    sources/playlistmodel.h \
-                    sources/volumeslider.h \
-                    sources/metadatawidget.h \
-					sources/support.h \
-                    sources/errorlog.h
-
-FORMS       +=      ui/mui.ui \
-                    ui/about.ui \
-                    ui/metadata.ui \
-                    ui/errorlog.ui
-
-SOURCES     +=      sources/main.cpp \
-                    sources/mui.cpp \
-                    sources/about.cpp \
-                    sources/playlistmodel.cpp \
-                    sources/volumeslider.cpp \
-                    sources/metadatawidget.cpp \
-					sources/support.cpp \
-                    sources/errorlog.cpp
-                    
+HEADERS += sources/mui.h \
+    sources/about.h \
+    sources/playlistmodel.h \
+    sources/volumeslider.h \
+    sources/metadatawidget.h \
+    sources/support.h \
+    sources/errorlog.h \
+    sources/editstyle.h
+FORMS += ui/mui.ui \
+    ui/about.ui \
+    ui/metadata.ui \
+    ui/errorlog.ui \
+    ui/editstyle.ui
+SOURCES += sources/main.cpp \
+    sources/mui.cpp \
+    sources/about.cpp \
+    sources/playlistmodel.cpp \
+    sources/volumeslider.cpp \
+    sources/metadatawidget.cpp \
+    sources/support.cpp \
+    sources/errorlog.cpp \
+    sources/editstyle.cpp
 RESOURCES += rcc/res.qrc
 CONFIG += release
 
 # for OS specific builds
-win32 {
-  LIBS += -L../../lib -lfmodex
-  OBJECTS += ../../lib/cfmod.o \
-             ../../lib/cplaylist.o \
-             ../../lib/caudiotags.o    	
-} else {
-  LIBS += -L/usr/lib -lfmodex
-  OBJECTS += ../../lib/cfmod_linux.o \
-             ../../lib/cplaylist_linux.o \
-             ../../lib/caudiotags_linux.o
+win32 { 
+    LIBS += -L../../lib \
+        -lfmodex
+    OBJECTS += ../../lib/cfmod.o \
+        ../../lib/cplaylist.o \
+        ../../lib/caudiotags.o
+}
+else { 
+    LIBS += -L/usr/lib \
+        -lfmodex
+    OBJECTS += ../../lib/cfmod_linux.o \
+        ../../lib/cplaylist_linux.o \
+        ../../lib/caudiotags_linux.o
 }
 
 # Output
