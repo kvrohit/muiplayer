@@ -12,7 +12,7 @@ class About : public QWidget
 {
     Q_OBJECT
     public:
-        About();		
+        About();
         
     private:
         Ui::AboutDialog ui;		

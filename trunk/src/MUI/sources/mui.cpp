@@ -5,13 +5,13 @@
 MUI::MUI(QWidget *parent, Qt::WFlags flags)
     : QMainWindow(parent, flags)
 {	
-	qWelcomeString = "<b>Welcome to MUI</b> <br/> Version 0.0.1";	
+    qWelcomeString = "Welcome To MUI";
 	ui.setupUi(this);
     ui.labelNowPlaying->setText(qWelcomeString);
     
-    ui.tableView->setModel(&model);
-	ui.tableView->hideColumn(2);
-    ui.tableView->verticalHeader()->setDefaultSectionSize(21);
+    ui.treeView->setModel(&model);
+	ui.treeView->hideColumn(2);
+    // ui.treeView->verticalHeader()->setDefaultSectionSize(21);
     
     // Dock Widget
     QDockWidget *dock = new QDockWidget(this);
@@ -61,42 +61,7 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
     loadSettings();
     setAcceptDrops(true);
     
-    connect(timer, SIGNAL(timeout()),
-		this, SLOT(displayTime()));
-        
-    connect(slider, SIGNAL(sliderReleased()),
-        this, SLOT(sSeek()));
-    connect(slider, SIGNAL(sliderPressed()),
-        this, SLOT(sFreeze()));
-    connect(slider, SIGNAL(sliderMoved(int)),
-        this, SLOT(sMove(int)));
-    connect(sliderVolume, SIGNAL(sliderMoved(int)),
-        this, SLOT(sVolume(int)));
-
-    connect(ui.actionExit, SIGNAL(triggered()),
-        this, SLOT(close()));
-    connect(ui.actionOpen, SIGNAL(triggered()),
-        this, SLOT(openPlaylist()));
-	connect(ui.actionSave, SIGNAL(triggered()),
-        this, SLOT(savePlaylist()));		
-    connect(ui.actionClear, SIGNAL(triggered()),
-        this, SLOT(clear()));
-    connect(ui.actionAbout, SIGNAL(triggered()),
-        this, SLOT(showAboutBox()));
-    connect(ui.actionErrorLog, SIGNAL(triggered()),
-        this, SLOT(showErrorDialog()));
-    
-    connect(ui.buttonAdd, SIGNAL(clicked()),
-        this, SLOT(addMusicFiles()));
-    connect(ui.actionNext, SIGNAL(triggered()),
-        this, SLOT(next()));
-    connect(ui.actionPrevious, SIGNAL(triggered()),
-        this, SLOT(previous()));
-    connect(ui.actionPlay, SIGNAL(triggered()),
-        this, SLOT(play()));
-
-    connect(ui.tableView, SIGNAL(doubleClicked(const QModelIndex &)),
-        this, SLOT(handleDoubleClick(const QModelIndex &)));
+    setupSignalsAndSlots();
 }
 
 void MUI::dragEnterEvent(QDragEnterEvent *event)
@@ -158,13 +123,6 @@ void MUI::handleDoubleClick(const QModelIndex &index)
 			msg.append("</font><br/><font size = 4>");
 			msg.append(convertToUnicode(tag.album));
 			msg.append("</font>");
-            
-			qDebug() << "Title: "<<tag.title.c_str();
-			qDebug() << "Artist: "<<tag.artist.c_str();
-			qDebug() << "Album: "<<tag.album.c_str();
-            qDebug() << "Artfile: " << tag.artfile.c_str();
-			qDebug() << "Track: "<<tag.track;
-			qDebug() << "Year: "<<tag.year;
 		}
 		catch(AudioTag::TagException &tex) {
             log.append(tex.what());
@@ -207,13 +165,9 @@ void MUI::stop()
 
 void MUI::play()
 {
-	static QString prev;
     if(isPlaying)
     {
         p->pause();
-		prev = ui.labelNowPlaying->text();
-		QString msg = "<b>Welcome to MUI</b><br/>Paused";
-        ui.labelNowPlaying->setText(msg);
         ui.actionPlay->setIcon(QIcon(":/images/images/play.png"));
         isPaused = true;
         isPlaying = false;
@@ -222,17 +176,18 @@ void MUI::play()
     else if(isPaused)
     {
         p->resume();
-		ui.labelNowPlaying->setText(prev);
         ui.actionPlay->setIcon(QIcon(":/images/images/pause.png"));
         isPaused = false;
         isPlaying = true;
         return;
     }
-        
-    QModelIndex l = ui.tableView->currentIndex();
-    qDebug() << l;
-    if( !l.isValid() ) return;
-    handleDoubleClick(l);
+    else
+    {
+        QModelIndex l = ui.treeView->currentIndex();
+        qDebug() << l;
+        if( !l.isValid() ) return;
+        handleDoubleClick(l);
+    }
 }
 
 void MUI::next()
@@ -244,17 +199,13 @@ void MUI::next()
         return;
     }
     
-    int nextRow = currentRow + 1;
-    ui.tableView->selectRow(nextRow);
-    handleDoubleClick(ui.tableView->currentIndex());
+    handleDoubleClick(ui.treeView->indexBelow(ui.treeView->currentIndex()));
 }
 
 void MUI::previous()
 {
     if (currentRow == 0) return;
-    int previousRow = currentRow - 1;
-    ui.tableView->selectRow(previousRow);
-    handleDoubleClick(ui.tableView->currentIndex());
+    handleDoubleClick(ui.treeView->indexAbove(ui.treeView->currentIndex()));
 }
 
 void MUI::openPlaylist()
@@ -382,9 +333,9 @@ void MUI::loadSettings()
     settings.endGroup();
     
     settings.beginGroup("ColumnWidth");
-    ui.tableView->setColumnWidth(0, settings.value("col0", "120").toInt());
-    ui.tableView->setColumnWidth(1, settings.value("col1", "120").toInt());
-    ui.tableView->setColumnWidth(2, settings.value("col2", "120").toInt());
+    ui.treeView->setColumnWidth(0, settings.value("col0", "120").toInt());
+    ui.treeView->setColumnWidth(1, settings.value("col1", "120").toInt());
+    ui.treeView->setColumnWidth(2, settings.value("col2", "120").toInt());
     settings.endGroup();
 }
 
@@ -409,10 +360,59 @@ void MUI::saveSettings()
     settings.endGroup();
     
     settings.beginGroup("ColumnWidth");
-    settings.setValue("col0", ui.tableView->columnWidth(0));
-    settings.setValue("col1", ui.tableView->columnWidth(1));
-    settings.setValue("col2", ui.tableView->columnWidth(2));
+    settings.setValue("col0", ui.treeView->columnWidth(0));
+    settings.setValue("col1", ui.treeView->columnWidth(1));
+    settings.setValue("col2", ui.treeView->columnWidth(2));
     settings.endGroup();
+}
+
+void MUI::setupSignalsAndSlots()
+{
+    connect(timer, SIGNAL(timeout()),
+        this, SLOT(displayTime()));
+
+    connect(slider, SIGNAL(sliderReleased()),
+        this, SLOT(sSeek()));
+    connect(slider, SIGNAL(sliderPressed()),
+        this, SLOT(sFreeze()));
+    connect(slider, SIGNAL(sliderMoved(int)),
+        this, SLOT(sMove(int)));
+    connect(sliderVolume, SIGNAL(sliderMoved(int)),
+        this, SLOT(sVolume(int)));
+
+    connect(ui.actionExit, SIGNAL(triggered()),
+        this, SLOT(close()));
+    connect(ui.actionOpen, SIGNAL(triggered()),
+        this, SLOT(openPlaylist()));
+    connect(ui.actionSave, SIGNAL(triggered()),
+        this, SLOT(savePlaylist()));
+    connect(ui.actionClear, SIGNAL(triggered()),
+        this, SLOT(clear()));
+    connect(ui.actionAbout, SIGNAL(triggered()),
+        this, SLOT(showAboutBox()));
+    connect(ui.actionErrorLog, SIGNAL(triggered()),
+        this, SLOT(showErrorDialog()));
+
+    connect(ui.buttonAdd, SIGNAL(clicked()),
+        this, SLOT(addMusicFiles()));
+    connect(ui.actionNext, SIGNAL(triggered()),
+        this, SLOT(next()));
+    connect(ui.actionPrevious, SIGNAL(triggered()),
+        this, SLOT(previous()));
+    connect(ui.actionPlay, SIGNAL(triggered()),
+        this, SLOT(play()));
+
+    connect(ui.treeView, SIGNAL(doubleClicked(const QModelIndex &)),
+        this, SLOT(handleDoubleClick(const QModelIndex &)));
+
+    connect(ui.actionEditStyleSheet, SIGNAL(triggered()),
+        this, SLOT(editStyleSheet()));
+}
+
+void MUI::editStyleSheet()
+{
+    EditStyle *editStyleDialog = new EditStyle;
+    editStyleDialog->show();
 }
 
 MUI::~MUI()
