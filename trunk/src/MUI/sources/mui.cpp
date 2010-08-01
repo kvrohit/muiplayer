@@ -198,14 +198,19 @@ void MUI::next()
         stop();
         return;
     }
-    
-    handleDoubleClick(ui.treeView->indexBelow(ui.treeView->currentIndex()));
+    ui.treeView->selectionModel()->setCurrentIndex(
+            ui.treeView->indexBelow(ui.treeView->currentIndex()),
+            QItemSelectionModel::Rows | QItemSelectionModel::ClearAndSelect);
+    handleDoubleClick(ui.treeView->currentIndex());
 }
 
 void MUI::previous()
 {
     if (currentRow == 0) return;
-    handleDoubleClick(ui.treeView->indexAbove(ui.treeView->currentIndex()));
+    ui.treeView->selectionModel()->setCurrentIndex(
+            ui.treeView->indexAbove(ui.treeView->currentIndex()),
+            QItemSelectionModel::Rows | QItemSelectionModel::ClearAndSelect);
+    handleDoubleClick(ui.treeView->currentIndex());
 }
 
 void MUI::openPlaylist()
