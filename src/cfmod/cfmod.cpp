@@ -47,7 +47,7 @@ std::string FMOD::Player::getLastError()
 }
 
 void FMOD::Player::pause()
-{     result = FMOD_System_Close(system);
+{
 	result = FMOD_Channel_SetPaused( channel, 1 );
 }
 
