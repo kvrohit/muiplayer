@@ -57,6 +57,7 @@ private:
     MetaDataWidget *mdWidget;
     PlaylistModel model;
     ErrorLog log;
+    QModelIndex nowPlayingIndex;
     
     int ms, lenms;
     int currentRow;
