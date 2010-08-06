@@ -10,7 +10,7 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
     ui.labelNowPlaying->setText(qWelcomeString);
     
     ui.treeView->setModel(&model);
-	ui.treeView->hideColumn(2);
+    ui.treeView->hideColumn(3);
     // ui.treeView->verticalHeader()->setDefaultSectionSize(21);
     
     // Dock Widget
@@ -89,15 +89,17 @@ void MUI::showErrorDialog()
 
 void MUI::handleDoubleClick(const QModelIndex &index)
 {
+    model.setItem(currentRow, Constants::STATEICON, new QStandardItem(""));
     QString totalTime;
     int row;
     
     row = index.row();
     currentRow = row;
         
-    QString file = QVariant(index.sibling(row, 2).data()).toString();
-    QString title = QVariant(index.sibling(row, 0).data()).toString();
+    QString file = QVariant(index.sibling(row, 3).data()).toString();
+    QString title = QVariant(index.sibling(row, 1).data()).toString();
     std::string filename = file.toStdString();
+    model.setItem(currentRow, Constants::STATEICON, new QStandardItem(QIcon(":/images/images/play_2.png"), ""));
     	
     try 
 	{
@@ -139,6 +141,7 @@ void MUI::handleDoubleClick(const QModelIndex &index)
         ui.actionPlay->setIcon(QIcon(":/images/images/pause.png"));
         isPlaying = true;
         timer->start();
+        nowPlayingIndex = index;
     }
     catch(FMOD::FMODException &e) {
         log.append(e.what());
@@ -169,6 +172,7 @@ void MUI::play()
     {
         p->pause();
         ui.actionPlay->setIcon(QIcon(":/images/images/play.png"));
+        model.setItem(currentRow, Constants::STATEICON, new QStandardItem(QIcon(":/images/images/pause_2.png"), ""));
         isPaused = true;
         isPlaying = false;
         return;
@@ -177,17 +181,16 @@ void MUI::play()
     {
         p->resume();
         ui.actionPlay->setIcon(QIcon(":/images/images/pause.png"));
+        model.setItem(currentRow, Constants::STATEICON, new QStandardItem(QIcon(":/images/images/play_2.png"), ""));
         isPaused = false;
         isPlaying = true;
         return;
     }
-    else
-    {
-        QModelIndex l = ui.treeView->currentIndex();
-        qDebug() << l;
-        if( !l.isValid() ) return;
-        handleDoubleClick(l);
-    }
+
+    QModelIndex l = ui.treeView->currentIndex();
+    qDebug() << l;
+    if( !l.isValid() ) return;
+    handleDoubleClick(l);
 }
 
 void MUI::next()
@@ -198,8 +201,9 @@ void MUI::next()
         stop();
         return;
     }
+    ui.treeView->selectionModel()->clearSelection();
     ui.treeView->selectionModel()->setCurrentIndex(
-            ui.treeView->indexBelow(ui.treeView->currentIndex()),
+            ui.treeView->indexBelow(nowPlayingIndex),
             QItemSelectionModel::Rows | QItemSelectionModel::ClearAndSelect);
     handleDoubleClick(ui.treeView->currentIndex());
 }
@@ -207,8 +211,9 @@ void MUI::next()
 void MUI::previous()
 {
     if (currentRow == 0) return;
+    ui.treeView->update();
     ui.treeView->selectionModel()->setCurrentIndex(
-            ui.treeView->indexAbove(ui.treeView->currentIndex()),
+            ui.treeView->indexAbove(nowPlayingIndex),
             QItemSelectionModel::Rows | QItemSelectionModel::ClearAndSelect);
     handleDoubleClick(ui.treeView->currentIndex());
 }
@@ -407,7 +412,7 @@ void MUI::setupSignalsAndSlots()
     connect(ui.actionPlay, SIGNAL(triggered()),
         this, SLOT(play()));
 
-    connect(ui.treeView, SIGNAL(doubleClicked(const QModelIndex &)),
+    connect(ui.treeView, SIGNAL(activated(const QModelIndex &)),
         this, SLOT(handleDoubleClick(const QModelIndex &)));
 
     connect(ui.actionEditStyleSheet, SIGNAL(triggered()),

@@ -7,10 +7,7 @@
 #include <QDebug>
 
 #include "cplaylist.hpp"
-
-#define TITLE 0
-#define DURATION 1
-#define FILENAME 2
+#include "constants.h"
 
 class PlaylistModel : public QStandardItemModel
 {

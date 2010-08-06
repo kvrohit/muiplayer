@@ -17,7 +17,8 @@ HEADERS += sources/mui.h \
     sources/metadatawidget.h \
     sources/support.h \
     sources/errorlog.h \
-    sources/editstyle.h
+    sources/editstyle.h \
+    sources/constants.h
 FORMS += ui/mui.ui \
     ui/about.ui \
     ui/metadata.ui \
