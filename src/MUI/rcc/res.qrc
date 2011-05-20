@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/images">
         <file>images/noart.jpg</file>
-        <file>images/tux.png</file>
         <file>images/add.png</file>
         <file>images/clear.png</file>
         <file>images/exit.png</file>
@@ -14,9 +13,10 @@
         <file>images/previous.png</file>
         <file>images/remove.png</file>
         <file>images/save.png</file>
-        <file>images/time.png</file>
         <file>images/volume.png</file>
         <file>images/pause_2.png</file>
         <file>images/play_2.png</file>
+        <file>images/media_playback_pause.png</file>
+        <file>images/media_playback_start.png</file>
     </qresource>
 </RCC>

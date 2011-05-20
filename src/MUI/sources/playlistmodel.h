@@ -17,7 +17,7 @@ class PlaylistModel : public QStandardItemModel
         void appendPlaylist(const QString &);
         void savePlaylist(const QString &);
         void clear();
-        
+
     private:
         int checkFile(QString);
         QString getFilenameOnly(QString) const;

@@ -6,16 +6,16 @@
 #include "cfmod.hpp"
 #include "cplaylist.hpp"
 #include "caudiotags.hpp"
-#include "mui.h"
+#include "globals.h"
 
-class About : public QWidget
+class About : public QDialog
 {
     Q_OBJECT
     public:
-        About();
-        
+        About(QWidget *parent = 0);
+
     private:
-        Ui::AboutDialog ui;		
-		QStandardItemModel model;
+        Ui::AboutDialog ui;
+        QStandardItemModel model;
 };
 #endif

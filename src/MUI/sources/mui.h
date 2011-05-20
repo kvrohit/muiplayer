@@ -2,77 +2,77 @@
 #define MUI_H
 
 #include <QtGui>
+
 #include "ui_mui.h"
-#include "playlistmodel.h"
 #include "volumeslider.h"
 #include "metadatawidget.h"
+#include "filesystembrowser.h"
+#include "artdata.h"
 #include "errorlog.h"
+#include "about.h"
 #include "editstyle.h"
+
+#include "musicdata.h"
+#include "musicdatamodel.h"
 
 #include "cfmod.hpp"
 #include "caudiotags.hpp"
 
 #include "support.h"
-
-const QString muiversion = "0.0.2";
+#include "globals.h"
+#include <string>
 
 class MUI : public QMainWindow
 {
     Q_OBJECT
-
 public:
     MUI(QWidget *parent = 0, Qt::WFlags flags = 0);
     ~MUI();
 
 private slots:
+	// Media playback related slots
     void handleDoubleClick(const QModelIndex &);
-    void addMusicFiles();
-    void addMusicFiles(QList<QUrl>);
-    void showErrorDialog();
     void displayTime();
-    void openPlaylist();
-    void savePlaylist();
-    void clear();
-    void stop();
-    void play();
-    void next();	
+	void stop();
+	void play();
+    void next();
     void previous();
-    void sSeek();
+    
+	// Slider related slots
+	void sSeek();
     void sFreeze();
     void sMove(int);
     void sVolume(int);
+	
+	void addMusicFiles();
+    void showErrorDialog();
+    void openPlaylist();
+    void savePlaylist();
+    void clear();
     void editStyleSheet();
-    
     void showAboutBox();
 
 private:
     Ui::MUIClass ui;
-    
+	ErrorLog log;
+	QModelIndex nowPlayingIndex;
+    MusicDataModel model;
+
     FMOD::Player *p;
-    
     QTimer *timer;
-    QSlider *slider;
-    VolumeSlider *sliderVolume;
-    QWidget *widgetSlider;
     MetaDataWidget *mdWidget;
-    PlaylistModel model;
-    ErrorLog log;
-    QModelIndex nowPlayingIndex;
-    
+    About *aboutDialog;
+    ArtData *artDataWidget;
+	
     int ms, lenms;
-    int currentRow;
     int volume;
     bool isPlaying, isPaused;
-    
-    void dragEnterEvent(QDragEnterEvent *);
-    void dropEvent(QDropEvent *);
+
     void loadSettings();
     void saveSettings();
     void closeEvent(QCloseEvent *);
     void setupSignalsAndSlots();
-    
-    QString qWelcomeString;
-            
+
     AudioTag::TagReader tagreader;
     AudioTag::GenericTag tag;
 };
