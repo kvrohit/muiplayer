@@ -1,18 +1,15 @@
 #include "mui.h"
-#include "about.h"
-#include <string>
 
 MUI::MUI(QWidget *parent, Qt::WFlags flags)
     : QMainWindow(parent, flags)
-{	
-    qWelcomeString = "Welcome To MUI";
-	ui.setupUi(this);
-    ui.labelNowPlaying->setText(qWelcomeString);
-    
+{
+    ui.setupUi(this);
+
+    aboutDialog = new About(this);
+
     ui.treeView->setModel(&model);
-    ui.treeView->hideColumn(3);
-    // ui.treeView->verticalHeader()->setDefaultSectionSize(21);
-    
+    ui.treeView->hideColumn(FILEPATH);
+
     // Dock Widget
     QDockWidget *dock = new QDockWidget(this);
     dock->setObjectName("dock");
@@ -20,66 +17,54 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
     mdWidget = new MetaDataWidget(dock);
     dock->setWidget(mdWidget);
     addDockWidget(Qt::RightDockWidgetArea, dock);
-    ui.menuView->addAction(dock->toggleViewAction());
+
+    QDockWidget *fsDock = new QDockWidget(this);
+    fsDock->setObjectName("fsDock");
+    fsDock->setWindowTitle("File System Browser");
+    FileSystemBrowser *fsBrowser = new FileSystemBrowser(fsDock);
+    fsDock->setWidget(fsBrowser);
+    addDockWidget(Qt::RightDockWidgetArea, fsDock);
+    // ui.menuView->addAction(dock->toggleViewAction());
     // End dock widget
-	
+
     // Sliders and Icons
-    widgetSlider = new QWidget(this);
-    
-    QHBoxLayout *layout = new QHBoxLayout;
-    QSizePolicy sp;
-    sp.setHorizontalPolicy(QSizePolicy::Expanding);
-    sp.setHorizontalStretch(1);
-    
-    slider = new QSlider(Qt::Horizontal, this);
-    slider->setSizePolicy(sp);
-    sliderVolume = new VolumeSlider(Qt::Horizontal, this);
-    
-    QLabel *labelTimeIcon = new QLabel(this);
-    labelTimeIcon->setPixmap(QPixmap(":/images/images/time.png"));
-    QLabel *labelVolumeIcon = new QLabel(this);
-    labelVolumeIcon->setPixmap(QPixmap(":/images/images/volume.png"));
-    
-    layout->addWidget(labelTimeIcon);
-    layout->addWidget(slider);
-    layout->addWidget(labelVolumeIcon);
-    layout->addWidget(sliderVolume);
-    widgetSlider->setLayout(layout);
-    
-    ui.toolBar->addWidget(widgetSlider);
+    QToolBar *artDataToolBar = new QToolBar("Media Info Bar", this);
+
+    artDataWidget = new ArtData(artDataToolBar);
+    artDataToolBar->addWidget(artDataWidget);
+    artDataToolBar->setObjectName("MediaInfoBar");
+    addToolBar(artDataToolBar);
     // End Sliders and Icons
-    
-    currentRow = 0;
+
     isPlaying = isPaused = false;
-    
+
     timer = new QTimer(this);
     timer->setInterval(500);
-    
+
     p = new FMOD::Player();
-    
-    slider->setRange(0, 0);
+
+    artDataWidget->m_seekBar->setRange(0, 0);
     loadSettings();
     setAcceptDrops(true);
-    
+
+    // Library tree view
+    QStandardItemModel *libModel = new QStandardItemModel();
+    QStandardItem *libraryParentItem = new QStandardItem("Library");
+    QStandardItem *playlistParentItem = new QStandardItem("Playlists");
+
+    playlistParentItem->appendRow(new QStandardItem("Playlist 1"));
+    libModel->appendRow(libraryParentItem);
+    libModel->appendRow(playlistParentItem);
+
+    ui.libraryTreeView->setModel(libModel);
+    ui.libraryTreeView->expandAll();
+
     setupSignalsAndSlots();
-}
-
-void MUI::dragEnterEvent(QDragEnterEvent *event)
-{
-    if(event->mimeData()->hasUrls())
-        event->acceptProposedAction();
-}
-
-void MUI::dropEvent(QDropEvent *event)
-{
-    addMusicFiles(event->mimeData()->urls());
-    event->acceptProposedAction();
 }
 
 void MUI::showAboutBox()
 {
-    About *a = new About();
-    a->show();
+    aboutDialog->show();
 }
 
 void MUI::showErrorDialog()
@@ -89,56 +74,50 @@ void MUI::showErrorDialog()
 
 void MUI::handleDoubleClick(const QModelIndex &index)
 {
-    model.setItem(currentRow, Constants::STATEICON, new QStandardItem(""));
-    QString totalTime;
-    int row;
-    
-    row = index.row();
-    currentRow = row;
-        
-    QString file = QVariant(index.sibling(row, 3).data()).toString();
-    QString title = QVariant(index.sibling(row, 1).data()).toString();
-    std::string filename = file.toStdString();
-    model.setItem(currentRow, Constants::STATEICON, new QStandardItem(QIcon(":/images/images/play_2.png"), ""));
-    	
-    try 
-	{
-		QString msg = "<b>Welcome to MUI</b><br/>Playing: ";
-		
+    int row = index.row();
+    QString filepath = index.data(FILEPATHROLE).toString();
+    std::string std_filepath = filepath.toStdString();
+
+    try {
+        if(nowPlayingIndex.isValid()) {
+            model.updateIcon(nowPlayingIndex.row(), STOPPED_STATE);
+        }
+        QString msg = "";
+
         if(isPlaying) stop();
-        
-        p->renderFile(filename);		
+
+        p->renderFile(std_filepath);
         lenms = p->getLength();
-		
-		msg.append(title);
-		
+
+        msg.append(filepath);
+
         try {
-			tagreader.renderFile(filename);
-			tag = tagreader.getTag();
-            mdWidget->setTag(tag, filename);
-			
-            msg="";
-			msg.append("<font size=6>");
-			msg.append(convertToUnicode(tag.artist));
-			msg.append(" / ");
-			msg.append(convertToUnicode(tag.title));
-			msg.append("</font><br/><font size = 4>");
-			msg.append(convertToUnicode(tag.album));
-			msg.append("</font>");
-		}
-		catch(AudioTag::TagException &tex) {
+            tagreader.renderFile(std_filepath);
+            tag = tagreader.getTag();
+            mdWidget->setTag(tag, std_filepath);
+
+            msg = "";
+            msg.append(convertToUnicode(tag.title));
+            msg.append(" <b>by</b> ");
+            msg.append(convertToUnicode(tag.artist));
+            msg.append(" <b>from the ablum</b> ");
+            msg.append(convertToUnicode(tag.album));
+
+            artDataWidget->setAlbumArt(filepath, tag.artfile.c_str());
+        }
+        catch(AudioTag::TagException &tex) {
             log.append(tex.what());
-		}
-        
-        totalTime.sprintf("%02d:%02d", lenms / 1000 / 60, lenms / 1000 % 60);
-        ui.labelTotalTime->setText(totalTime);
-        
-        slider->setMaximum(lenms);
+        }
+
+        artDataWidget->setTotalTime(formatTimeToQString(lenms));
+        artDataWidget->m_seekBar->setMaximum(lenms);
+		artDataWidget->setSongTitle(msg);
+		
         p->play();
         sVolume(volume);
+        model.updateIcon(row, PLAY_STATE);
         
-        ui.labelNowPlaying->setText(msg);
-        ui.actionPlay->setIcon(QIcon(":/images/images/pause.png"));
+        ui.actionPlay->setIcon(QIcon(Mui::MediaPauseIcon));
         isPlaying = true;
         timer->start();
         nowPlayingIndex = index;
@@ -152,18 +131,15 @@ void MUI::stop()
 {
     p->stop();
     isPlaying = isPaused = false;
-    ui.actionPlay->setIcon(QIcon(":/images/images/play.png"));
-    slider->setValue(0);
+    ui.actionPlay->setIcon(QIcon(Mui::MediaPlaybackIcon));
+    artDataWidget->reset();
+    mdWidget->reset();
     timer->stop();
-    
-    ui.labelTime->setText("00:00");
-    ui.labelTotalTime->setText("00:00");
-    ui.labelNowPlaying->setText(qWelcomeString);
-	
-	if(tag.artfile != "")
-	{
-		QDir().remove( tag.artfile.c_str() );		
-	}
+
+    if(tag.artfile != "")
+    {
+        QDir().remove( tag.artfile.c_str() );
+    }
 }
 
 void MUI::play()
@@ -171,8 +147,8 @@ void MUI::play()
     if(isPlaying)
     {
         p->pause();
-        ui.actionPlay->setIcon(QIcon(":/images/images/play.png"));
-        model.setItem(currentRow, Constants::STATEICON, new QStandardItem(QIcon(":/images/images/pause_2.png"), ""));
+        ui.actionPlay->setIcon(QIcon(Mui::MediaPlaybackIcon));
+        model.updateIcon(nowPlayingIndex.row(), PAUSED_STATE);
         isPaused = true;
         isPlaying = false;
         return;
@@ -180,38 +156,44 @@ void MUI::play()
     else if(isPaused)
     {
         p->resume();
-        ui.actionPlay->setIcon(QIcon(":/images/images/pause.png"));
-        model.setItem(currentRow, Constants::STATEICON, new QStandardItem(QIcon(":/images/images/play_2.png"), ""));
+        ui.actionPlay->setIcon(QIcon(Mui::MediaPauseIcon));
+        model.updateIcon(nowPlayingIndex.row(), PLAY_STATE);
         isPaused = false;
         isPlaying = true;
         return;
     }
 
     QModelIndex l = ui.treeView->currentIndex();
-    qDebug() << l;
-    if( !l.isValid() ) return;
+    if(!l.isValid()) {
+        return;
+    }
     handleDoubleClick(l);
 }
 
 void MUI::next()
 {
     int rc = model.rowCount();
+    int currentRow = nowPlayingIndex.row();
     if(currentRow == (--rc))
     {
         stop();
         return;
     }
-    ui.treeView->selectionModel()->clearSelection();
+    model.updateIcon(currentRow, STOPPED_STATE);
+
     ui.treeView->selectionModel()->setCurrentIndex(
             ui.treeView->indexBelow(nowPlayingIndex),
             QItemSelectionModel::Rows | QItemSelectionModel::ClearAndSelect);
+
     handleDoubleClick(ui.treeView->currentIndex());
 }
 
 void MUI::previous()
 {
+    int currentRow = nowPlayingIndex.row();
     if (currentRow == 0) return;
-    ui.treeView->update();
+    model.updateIcon(currentRow, STOPPED_STATE);
+    ui.treeView->selectionModel()->clearSelection();
     ui.treeView->selectionModel()->setCurrentIndex(
             ui.treeView->indexAbove(nowPlayingIndex),
             QItemSelectionModel::Rows | QItemSelectionModel::ClearAndSelect);
@@ -222,81 +204,55 @@ void MUI::openPlaylist()
 {
     QString filename = QFileDialog::getOpenFileName(this, "Open Playlist", "/",
         "Playlist (*.m3u);;All Files (*.*)");
-        
+
     if(filename.isEmpty()) return;
-    model.appendPlaylist(filename);
+    // model.appendPlaylist(filename);
 }
 
 void MUI::savePlaylist()
 {
-	QString filename = QFileDialog::getSaveFileName(this, "Save Playlist", "/",
-		"Playlist (*.m3u);;All Files (*.*)");
-	
+    QString filename = QFileDialog::getSaveFileName(this, "Save Playlist", "/",
+        "Playlist (*.m3u);;All Files (*.*)");
+
     if(filename.isEmpty()) return;
-    model.savePlaylist(filename);
+    // model.savePlaylist(filename);
 }
 
 void MUI::addMusicFiles()
 {
     QString filename;
+    unsigned int lenms;
+
     QStringList files = QFileDialog::getOpenFileNames(this, "Open", "/",
         "Audio (*.mp3 *.aac *.mp4 *.ogg);;All files (*.*)");
-    
-    foreach(QString filename, files)
-        model.append(filename, p->getLengthFromName(filename.toStdString()));
-}
-
-void MUI::addMusicFiles(QList<QUrl> urls)
-{
-    foreach(QUrl url, urls)
-    {
-        QString filename = url.path();
-        #ifdef WIN32
-        filename = filename.right(filename.length() - 1);
-        #endif
-        qDebug() << filename;
-        
-        QFileInfo f(filename);
-        if(f.isDir())
-        {
-            QDirIterator *it = new QDirIterator(filename, QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot,
-                QDirIterator::Subdirectories);
-            while(it->hasNext()) {
-                QString f = it->next();
-                model.append(f, p->getLengthFromName(f.toStdString()));
-                qApp->processEvents();
-            }
-            delete it;
-        }
-        else
-        {
-            model.append(filename, p->getLengthFromName(filename.toStdString()));
-        }
+    qDebug() << filename;
+    foreach(QString filename, files) {
+        lenms = p->getLengthFromName(filename.toStdString());
+        model.appendData(filename, formatTimeToQString(lenms));
     }
 }
 
 void MUI::clear()
 {
-    model.clear();
-    currentRow = 0;
+    model.resetData();
 }
 
 void MUI::displayTime()
 {
     ms = p->getPosition();
-    
-    QString curTime;
-    curTime.sprintf("%02d:%02d", ms / 1000 / 60, ms / 1000 % 60);
-    
-    slider->setValue(ms);
-    ui.labelTime->setText(curTime);
-    
-    if(ms == lenms) next();
+	
+	if(ms == lenms) {
+		next();
+		return;
+	}
+	
+    artDataWidget->m_seekBar->setValue(ms);
+    artDataWidget->setCurrentTime(formatTimeToQString(ms));
 }
 
 void MUI::sSeek()
 {
-    unsigned int pos = slider->value();
+    unsigned int pos = artDataWidget->m_seekBar->value();
     p->setPosition(pos);
     timer->start();
 }
@@ -308,9 +264,7 @@ void MUI::sFreeze()
 
 void MUI::sMove(int value)
 {
-    QString curTime;
-    curTime.sprintf("%02d:%02d", value / 1000 / 60, value / 1000 % 60);
-    ui.labelTime->setText(curTime);
+    artDataWidget->setCurrentTime(formatTimeToQString(value));
 }
 
 void MUI::sVolume(int value)
@@ -330,31 +284,44 @@ void MUI::loadSettings()
     // Load default playlist
     QString file = QCoreApplication::applicationDirPath();
     file.append("/default.m3u");
-    QFileInfo f(file);
-    if(f.exists()) model.appendPlaylist(file);
     
+	QFileInfo f(file);
+    if(f.exists()) {
+        // model.appendPlaylist(file);
+    }
+
     QSettings settings("BurningMedia", "MUI");
-    
+
     settings.beginGroup("MainWindow");
     restoreState(settings.value("state").toByteArray());
     restoreGeometry(settings.value("geometry").toByteArray());
     volume = settings.value("vol", 100).toInt();
-    sliderVolume->setValue(volume);
+    // sliderVolume->setValue(volume);
     settings.endGroup();
-    
+
     settings.beginGroup("ColumnWidth");
-    ui.treeView->setColumnWidth(0, settings.value("col0", "120").toInt());
-    ui.treeView->setColumnWidth(1, settings.value("col1", "120").toInt());
-    ui.treeView->setColumnWidth(2, settings.value("col2", "120").toInt());
+    ui.treeView->setColumnWidth(STATEICON,
+                                settings.value("col0", "120").toInt());
+    ui.treeView->setColumnWidth(SONGTITLE,
+                                settings.value("col1", "120").toInt());
+    ui.treeView->setColumnWidth(ARTIST,
+                                settings.value("col2", "120").toInt());
+    ui.treeView->setColumnWidth(ALBUM,
+                                settings.value("col3", "120").toInt());
+    ui.treeView->setColumnWidth(DURATION,
+                                settings.value("col4", "120").toInt());
+    settings.endGroup();
+
+    settings.beginGroup("SplitterStates");
+    ui.splitterMain->restoreState(settings.value("splitterMain").toByteArray());
     settings.endGroup();
 }
 
 void MUI::closeEvent(QCloseEvent *event)
 {
-	if(tag.artfile != "")
-	{
-		QDir().remove( tag.artfile.c_str() );	
-	}
+    if(tag.artfile != "") {
+        QDir().remove( tag.artfile.c_str() );
+    }
     saveSettings();
     event->accept();
 }
@@ -362,17 +329,23 @@ void MUI::closeEvent(QCloseEvent *event)
 void MUI::saveSettings()
 {
     QSettings settings("BurningMedia", "MUI");
-    
+
     settings.beginGroup("MainWindow");
     settings.setValue("state", saveState());
     settings.setValue("geometry", saveGeometry());
-    settings.setValue("vol", sliderVolume->value());
+    // settings.setValue("vol", sliderVolume->value());
     settings.endGroup();
-    
+
     settings.beginGroup("ColumnWidth");
-    settings.setValue("col0", ui.treeView->columnWidth(0));
-    settings.setValue("col1", ui.treeView->columnWidth(1));
-    settings.setValue("col2", ui.treeView->columnWidth(2));
+    settings.setValue("col0", ui.treeView->columnWidth(STATEICON));
+    settings.setValue("col1", ui.treeView->columnWidth(SONGTITLE));
+    settings.setValue("col2", ui.treeView->columnWidth(ARTIST));
+    settings.setValue("col3", ui.treeView->columnWidth(ALBUM));
+    settings.setValue("col4", ui.treeView->columnWidth(DURATION));
+    settings.endGroup();
+
+    settings.beginGroup("SplitterStates");
+    settings.setValue("splitterMain", ui.splitterMain->saveState());
     settings.endGroup();
 }
 
@@ -381,14 +354,14 @@ void MUI::setupSignalsAndSlots()
     connect(timer, SIGNAL(timeout()),
         this, SLOT(displayTime()));
 
-    connect(slider, SIGNAL(sliderReleased()),
+    connect(artDataWidget->m_seekBar, SIGNAL(sliderReleased()),
         this, SLOT(sSeek()));
-    connect(slider, SIGNAL(sliderPressed()),
+    connect(artDataWidget->m_seekBar, SIGNAL(sliderPressed()),
         this, SLOT(sFreeze()));
-    connect(slider, SIGNAL(sliderMoved(int)),
+    connect(artDataWidget->m_seekBar, SIGNAL(sliderMoved(int)),
         this, SLOT(sMove(int)));
-    connect(sliderVolume, SIGNAL(sliderMoved(int)),
-        this, SLOT(sVolume(int)));
+    //connect(sliderVolume, SIGNAL(sliderMoved(int)),
+    //    this, SLOT(sVolume(int)));
 
     connect(ui.actionExit, SIGNAL(triggered()),
         this, SLOT(close()));
@@ -402,9 +375,11 @@ void MUI::setupSignalsAndSlots()
         this, SLOT(showAboutBox()));
     connect(ui.actionErrorLog, SIGNAL(triggered()),
         this, SLOT(showErrorDialog()));
+    connect(ui.actionAddMusicFiles, SIGNAL(triggered()),
+            this, SLOT(addMusicFiles()));
 
-    connect(ui.buttonAdd, SIGNAL(clicked()),
-        this, SLOT(addMusicFiles()));
+    /*connect(ui.buttonAdd, SIGNAL(clicked()),
+        this, SLOT(addMusicFiles()));*/
     connect(ui.actionNext, SIGNAL(triggered()),
         this, SLOT(next()));
     connect(ui.actionPrevious, SIGNAL(triggered()),
@@ -427,5 +402,10 @@ void MUI::editStyleSheet()
 
 MUI::~MUI()
 {
-
+    // Do cleanup here...
+    delete p;
+	delete timer;
+	delete artDataWidget;
+	delete mdWidget;
+    delete aboutDialog;
 }

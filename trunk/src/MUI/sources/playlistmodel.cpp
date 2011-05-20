@@ -4,7 +4,7 @@ PlaylistModel::PlaylistModel()
 {
     QStringList headerLabels;
     headerLabels << "" << "Songtitle" << "Duration" << "Filepath";
-    
+
     setHorizontalHeaderLabels(headerLabels);
 }
 
@@ -12,7 +12,7 @@ void PlaylistModel::append(const QString &filename, unsigned int lenms)
 {
     int row = rowCount();
     QString totalTime;
-    
+
     if(checkFile(filename))
     {
         qDebug() << "Adding file : " << filename;
@@ -30,11 +30,11 @@ void PlaylistModel::appendPlaylist(const QString &filename)
     int length;
     QString len;
     std::string title, filepath, file;
-    
+
     file = filename.toStdString();
     try {
         p.renderPlaylist(file);
-        
+
         while(p.getNextEntry(length, title, filepath))
         {
             int row = rowCount();
@@ -54,21 +54,21 @@ void PlaylistModel::savePlaylist(const QString &filename)
     MUIPlaylist::Playlist p;
     std::string title, path, len, file;
     int length, min, sec;
-    
+
     file = filename.toStdString();
-    
+
     try {
         p.createPlaylist(file, false);
-            
+
         for(int i=0; i<rowCount(); i++)
         {
             title = QVariant(item(i, Constants::TITLE)->text()).toString().toStdString();
             len = QVariant(item(i, Constants::DURATION)->text()).toString().toStdString();
             path = QVariant(item(i, Constants::FILENAME)->text()).toString().toStdString();
-            
+
             sscanf(len.c_str(), "%d:%d", &min, &sec);
             length = (min * 60) + sec;
-            
+
             p.writeNextEntry(length, title, path);
         }
         p.endList();

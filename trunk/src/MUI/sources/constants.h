@@ -1,6 +1,10 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+#include <QString>
+
+const QString NOART(":/images/images/noart.jpg");
+
 class Constants
 {
 public:

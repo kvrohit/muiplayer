@@ -1,7 +1,7 @@
 # MUI QT PROJECT FILE
 # Modify this if new project files are added
 TEMPLATE = app
-TARGET = 
+TARGET =
 DEPENDPATH += . \
     rcc \
     sources \
@@ -18,7 +18,12 @@ HEADERS += sources/mui.h \
     sources/support.h \
     sources/errorlog.h \
     sources/editstyle.h \
-    sources/constants.h
+    sources/constants.h \
+    sources/artdata.h \
+    sources/filesystembrowser.h \
+    sources/musicdatamodel.h \
+    sources/musicdata.h \
+	sources/globals.h
 FORMS += ui/mui.ui \
     ui/about.ui \
     ui/metadata.ui \
@@ -32,19 +37,23 @@ SOURCES += sources/main.cpp \
     sources/metadatawidget.cpp \
     sources/support.cpp \
     sources/errorlog.cpp \
-    sources/editstyle.cpp
+    sources/editstyle.cpp \
+    sources/artdata.cpp \
+    sources/filesystembrowser.cpp \
+    sources/musicdatamodel.cpp \
+    sources/musicdata.cpp
 RESOURCES += rcc/res.qrc
 CONFIG += release
 
 # for OS specific builds
-win32 { 
+win32 {
     LIBS += -L../../lib \
         -lfmodex
     OBJECTS += ../../lib/cfmod.o \
         ../../lib/cplaylist.o \
         ../../lib/caudiotags.o
 }
-else { 
+else {
     LIBS += -L/usr/lib \
         -lfmodex
     OBJECTS += ../../lib/cfmod_linux.o \
