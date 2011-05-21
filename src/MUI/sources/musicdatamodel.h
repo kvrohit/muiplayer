@@ -15,8 +15,7 @@
 #include "musicdata.h"
 #include "caudiotags.hpp"
 #include "cfmod.hpp"
-
-#include "support.h"
+#include "cplaylist.hpp"
 
 const int COLUMNCOUNT = 6;
 const int FILEPATHROLE = Qt::UserRole + 1;
@@ -40,9 +39,10 @@ public:
     bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row,
                       int column, const QModelIndex &parent);
 
-    void appendData(const QString &filepath, const QString &totaltime = QString());
+    void appendData(const QString &filepath);
+    void appendPlaylist(const QString &filepath);
     void appendData(const MusicData &data);
-    void updateIcon(int row, IconState newState);
+    void updateIcon(int row, Mui::IconState newState);
     void resetData();
 
     ~MusicDataModel();

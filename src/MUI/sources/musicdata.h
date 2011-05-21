@@ -6,9 +6,6 @@
 
 #include "globals.h"
 
-enum { STATEICON, SONGTITLE, ARTIST, ALBUM, DURATION, FILEPATH };
-enum IconState { PLAY_STATE, PAUSED_STATE, STOPPED_STATE };
-
 class MusicData
 {
 public:
@@ -35,7 +32,7 @@ public:
 
     QString valueAt(int index) const;
     void setData(const MusicData &data);
-    void setIconState(IconState state);
+    void setIconState(Mui::IconState state);
 };
 
 #endif // MUSICDATA_H
