@@ -12,9 +12,9 @@ void MetaDataWidget::setTag(const AudioTag::GenericTag &tag, const std::string &
     std::ifstream cover;
     QImage img;
 
-    ui.labelTitle->setText(convertToUnicode(tag.title));
-    ui.labelArtist->setText(convertToUnicode(tag.artist));
-    ui.labelAlbum->setText(convertToUnicode(tag.album));
+    ui.labelTitle->setText(Mui::convertToUnicode(tag.title));
+    ui.labelArtist->setText(Mui::convertToUnicode(tag.artist));
+    ui.labelAlbum->setText(Mui::convertToUnicode(tag.album));
     ui.labelYear->setText(tag.year ? QString("%1").arg(tag.year) : QString("Unknown"));
 
     pos = path.find_last_of("/\\");

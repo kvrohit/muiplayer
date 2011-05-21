@@ -18,7 +18,6 @@
 #include "cfmod.hpp"
 #include "caudiotags.hpp"
 
-#include "support.h"
 #include "globals.h"
 #include <string>
 
@@ -30,21 +29,21 @@ public:
     ~MUI();
 
 private slots:
-	// Media playback related slots
+    // Media playback related slots
     void handleDoubleClick(const QModelIndex &);
     void displayTime();
-	void stop();
-	void play();
+    void stop();
+    void play();
     void next();
     void previous();
-    
-	// Slider related slots
-	void sSeek();
+
+    // Slider related slots
+    void sSeek();
     void sFreeze();
     void sMove(int);
     void sVolume(int);
-	
-	void addMusicFiles();
+
+    void addMusicFiles();
     void showErrorDialog();
     void openPlaylist();
     void savePlaylist();
@@ -54,8 +53,8 @@ private slots:
 
 private:
     Ui::MUIClass ui;
-	ErrorLog log;
-	QModelIndex nowPlayingIndex;
+    ErrorLog log;
+    QModelIndex nowPlayingIndex;
     MusicDataModel model;
 
     FMOD::Player *p;
@@ -63,7 +62,7 @@ private:
     MetaDataWidget *mdWidget;
     About *aboutDialog;
     ArtData *artDataWidget;
-	
+
     int ms, lenms;
     int volume;
     bool isPlaying, isPaused;

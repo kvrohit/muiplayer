@@ -11,7 +11,6 @@
 #include "ui_metadata.h"
 #include "caudiotags.hpp"
 
-#include "support.h"
 #include "globals.h"
 
 class MetaDataWidget : public QWidget

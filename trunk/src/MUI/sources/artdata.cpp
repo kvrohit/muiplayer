@@ -5,7 +5,7 @@ ArtData::ArtData(QWidget *parent) : QWidget(parent)
     QHBoxLayout *hBoxLayout = new QHBoxLayout(this);
     m_albumArtLabel = new QLabel(this);
 
-    m_songTitleLabel = new QLabel("Songtitle");
+    m_songTitleLabel = new QLabel(Mui::WelcomeText);
 
     QWidget *placeHolder = new QWidget(this);
     QWidget *seekBarPlaceHolder = new QWidget(this);
@@ -13,8 +13,8 @@ ArtData::ArtData(QWidget *parent) : QWidget(parent)
     QVBoxLayout *vBoxLayout = new QVBoxLayout(this);
     QHBoxLayout *hSeekBarLayout = new QHBoxLayout(this);
 
-    m_totalTimeLabel = new QLabel("00:00");
-    m_currentTimeLabel = new QLabel("00:00");
+    m_totalTimeLabel = new QLabel(Mui::ZeroTime);
+    m_currentTimeLabel = new QLabel(Mui::ZeroTime);
     m_seekBar = new QSlider(Qt::Horizontal, this);
 
     hSeekBarLayout->addWidget(m_currentTimeLabel);
@@ -69,7 +69,7 @@ void ArtData::setSongTitle(const QString &songTitle)
 void ArtData::setAlbumArt(const QString &filePath, const QString &albumArtPath)
 {
     QImage qImage;
-	int index = filePath.lastIndexOf("/");
+    int index = filePath.lastIndexOf("/");
     QString coverPath = filePath.left(index) + "/cover.jpg";
     QFileInfo f(coverPath);
 
@@ -92,13 +92,14 @@ void ArtData::setAlbumArt(const QString &filePath, const QString &albumArtPath)
 void ArtData::reset()
 {
     QImage qImage;
-	m_currentTimeLabel->setText("00:00");
-    m_totalTimeLabel->setText("00:00");
-	
+    m_currentTimeLabel->setText(Mui::ZeroTime);
+    m_totalTimeLabel->setText(Mui::ZeroTime);
+    m_songTitleLabel->setText(Mui::WelcomeText);
+
     qImage.load(Mui::NoAlbumArt);
     m_albumArtLabel->setPixmap(QPixmap::fromImage(qImage));
-    
-	m_seekBar->setValue(0);
+
+    m_seekBar->setValue(0);
     m_seekBar->setMaximum(0);
     m_seekBar->setMinimum(0);
 }

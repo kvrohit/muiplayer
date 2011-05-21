@@ -13,17 +13,17 @@ MusicData::MusicData(const MusicData &data)
 QString MusicData::valueAt(int index) const
 {
     switch(index) {
-    case STATEICON:
+    case Mui::STATEICON:
         return QString();
-    case SONGTITLE:
+    case Mui::SONGTITLE:
         return songtitle;
-    case ARTIST:
+    case Mui::ARTIST:
         return artist;
-    case ALBUM:
+    case Mui::ALBUM:
         return album;
-    case DURATION:
+    case Mui::DURATION:
         return duration;
-    case FILEPATH:
+    case Mui::FILEPATH:
         return filepath;
     default:
         return QString();
@@ -40,16 +40,16 @@ void MusicData::setData(const MusicData &data)
     duration = data.duration;
 }
 
-void MusicData::setIconState(IconState state)
+void MusicData::setIconState(Mui::IconState state)
 {
     switch(state) {
-    case PLAY_STATE:
+    case Mui::PLAY_STATE:
         icon = QIcon(Mui::PlayIcon);
         return;
-    case PAUSED_STATE:
+    case Mui::PAUSED_STATE:
         icon = QIcon(Mui::PauseIcon);
         return;
-    case STOPPED_STATE:
+    case Mui::STOPPED_STATE:
     default:
         icon = QIcon();
     }
