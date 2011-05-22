@@ -183,6 +183,34 @@ void MusicDataModel::appendPlaylist(const QString &filepath)
     }
 }
 
+void MusicDataModel::savePlaylist(const QString &filepath)
+{
+    MUIPlaylist::Playlist p;
+    std::string strTitle, strPath, strLen, strFilepath;
+    int length, min, sec;
+
+    strFilepath = filepath.toStdString();
+
+    try {
+        p.createPlaylist(strFilepath, false);
+
+        for(int i = 0; i < rowCount(); ++i) {
+            strTitle = list.at(i)->songtitle.toStdString();
+            strLen = list.at(i)->duration.toStdString();
+            strPath = list.at(i)->filepath.toStdString();
+
+            sscanf(strTitle.c_str(), "%d:%d", &min, &sec);
+            length = (min * 60) + sec;
+
+            p.writeNextEntry(length, strTitle, strPath);
+        }
+        p.endList();
+    }
+    catch(MUIPlaylist::PlaylistException &e) {
+        qDebug() << QString::fromStdString(e.what());
+    }
+}
+
 void MusicDataModel::appendData(const MusicData &data)
 {
     int row = rowCount();
@@ -197,11 +225,67 @@ void MusicDataModel::updateIcon(int row, Mui::IconState newState)
     emit dataChanged(index(row, 0), index(row, COLUMNCOUNT));
 }
 
+void MusicDataModel::load()
+{
+    QString filepath = QCoreApplication::applicationDirPath();
+    filepath.append(Mui::ModelDataFileName);
+
+    QFile file(filepath);
+    MusicData d;
+
+    if(!file.open(QIODevice::ReadOnly)) {
+        return;
+    }
+
+    QDataStream in(&file);
+    qint32 magicNumber;
+    in.setVersion(QDataStream::Qt_4_5);
+
+    in >> magicNumber;
+
+    if(magicNumber != Mui::MagicNumber) {
+        qDebug() << "Unsupported file format";
+        file.close();
+        return;
+    }
+
+    while(!in.atEnd()) {
+        in >> d.songtitle >> d.artist >> d.album >> d.duration >> d.filepath;
+        appendData(d);
+    }
+
+    file.close();
+}
+
+void MusicDataModel::save()
+{
+    QString filepath = QCoreApplication::applicationDirPath();
+    filepath.append(Mui::ModelDataFileName);
+
+    QFile file(filepath);
+
+    if(!file.open(QIODevice::WriteOnly)) {
+        return;
+    }
+
+    QDataStream out(&file);
+    out.setVersion(QDataStream::Qt_4_5);
+
+    out << Mui::MagicNumber;
+
+    for(int i = 0; i < list.count(); ++i) {
+        out << list[i]->songtitle << list[i]->artist << list[i]->album <<
+               list[i]->duration << list[i]->filepath;
+    }
+
+    file.close();
+}
+
 void MusicDataModel::resetData()
 {
     list.clear();
-    qDeleteAll(list);
     reset();
+    qDeleteAll(list);
 }
 
 bool MusicDataModel::isSupportedFormat(const QString &filepath)
