@@ -37,15 +37,8 @@ ArtData::ArtData(QWidget *parent) : QWidget(parent)
     m_albumArtLabel->setFixedSize(48, 48);
     m_albumArtLabel->setScaledContents(true);
 
-    QFont font("Segoe UI", 9, 0, false);
-
-    m_songTitleLabel->setFont(font);
-    m_currentTimeLabel->setFont(font);
-    m_totalTimeLabel->setFont(font);
-
     hBoxLayout->addWidget(m_albumArtLabel);
     hBoxLayout->addWidget(placeHolder);
-
     hBoxLayout->setContentsMargins(2, 2, 2, 2);
 
     this->setLayout(hBoxLayout);

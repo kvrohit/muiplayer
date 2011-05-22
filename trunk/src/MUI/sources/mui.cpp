@@ -44,22 +44,9 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
     p = new FMOD::Player();
 
     artDataWidget->m_seekBar->setRange(0, 0);
-    loadSettings();
-    setAcceptDrops(true);
-
-    // Library tree view
-    QStandardItemModel *libModel = new QStandardItemModel();
-    QStandardItem *libraryParentItem = new QStandardItem("Library");
-    QStandardItem *playlistParentItem = new QStandardItem("Playlists");
-
-    playlistParentItem->appendRow(new QStandardItem("Playlist 1"));
-    libModel->appendRow(libraryParentItem);
-    libModel->appendRow(playlistParentItem);
-
-    ui.libraryTreeView->setModel(libModel);
-    ui.libraryTreeView->expandAll();
 
     setupSignalsAndSlots();
+    loadSettings();
 }
 
 void MUI::showAboutBox()
@@ -144,8 +131,7 @@ void MUI::stop()
 
 void MUI::play()
 {
-    if(isPlaying)
-    {
+    if(isPlaying) {
         p->pause();
         ui.actionPlay->setIcon(QIcon(Mui::MediaPlaybackIcon));
         model.updateIcon(nowPlayingIndex.row(), Mui::PAUSED_STATE);
@@ -153,8 +139,7 @@ void MUI::play()
         isPlaying = false;
         return;
     }
-    else if(isPaused)
-    {
+    else if(isPaused) {
         p->resume();
         ui.actionPlay->setIcon(QIcon(Mui::MediaPauseIcon));
         model.updateIcon(nowPlayingIndex.row(), Mui::PLAY_STATE);
@@ -174,8 +159,7 @@ void MUI::next()
 {
     int rc = model.rowCount();
     int currentRow = nowPlayingIndex.row();
-    if(currentRow == (--rc))
-    {
+    if(currentRow == (--rc)) {
         stop();
         return;
     }
@@ -217,8 +201,11 @@ void MUI::savePlaylist()
     QString filename = QFileDialog::getSaveFileName(this, "Save Playlist", "/",
         "Playlist (*.m3u);;All Files (*.*)");
 
-    if(filename.isEmpty()) return;
-    // model.savePlaylist(filename);
+    if(filename.isEmpty()) {
+        return;
+    }
+
+    model.savePlaylist(filename);
 }
 
 void MUI::addMusicFiles()
@@ -280,15 +267,6 @@ void MUI::sVolume(int value)
 
 void MUI::loadSettings()
 {
-    // Load default playlist
-    QString file = QCoreApplication::applicationDirPath();
-    file.append("/default.m3u");
-
-    QFileInfo f(file);
-    if(f.exists()) {
-        model.appendPlaylist(file);
-    }
-
     QSettings settings("BurningMedia", "MUI");
 
     settings.beginGroup("MainWindow");
@@ -311,9 +289,13 @@ void MUI::loadSettings()
                                 settings.value("col4", "120").toInt());
     settings.endGroup();
 
+    /*
     settings.beginGroup("SplitterStates");
     ui.splitterMain->restoreState(settings.value("splitterMain").toByteArray());
     settings.endGroup();
+    */
+
+    model.load();
 }
 
 void MUI::closeEvent(QCloseEvent *event)
@@ -343,9 +325,13 @@ void MUI::saveSettings()
     settings.setValue("col4", ui.treeView->columnWidth(Mui::DURATION));
     settings.endGroup();
 
+    /*
     settings.beginGroup("SplitterStates");
     settings.setValue("splitterMain", ui.splitterMain->saveState());
     settings.endGroup();
+    */
+
+    model.save();
 }
 
 void MUI::setupSignalsAndSlots()

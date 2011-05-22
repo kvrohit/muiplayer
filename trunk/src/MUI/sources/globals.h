@@ -13,6 +13,9 @@ namespace Mui {
     const QString MUIVersion        =   "0.0.3";
     const QString WelcomeText       =   "Welcome to MUI";
     const QString ZeroTime          =   "00:00";
+    const QString ModelDataFileName =   "/mui_music_data.dat";
+
+    const qint32 MagicNumber        =   0x69696969;
 
     enum { STATEICON, SONGTITLE, ARTIST, ALBUM, DURATION, FILEPATH };
     enum IconState { PLAY_STATE, PAUSED_STATE, STOPPED_STATE };

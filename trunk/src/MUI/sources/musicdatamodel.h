@@ -41,9 +41,13 @@ public:
 
     void appendData(const QString &filepath);
     void appendPlaylist(const QString &filepath);
+    void savePlaylist(const QString &filepath);
     void appendData(const MusicData &data);
     void updateIcon(int row, Mui::IconState newState);
     void resetData();
+
+    void load();
+    void save();
 
     ~MusicDataModel();
 
