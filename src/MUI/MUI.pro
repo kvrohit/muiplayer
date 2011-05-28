@@ -12,12 +12,10 @@ INCLUDEPATH += . \
 # Input
 HEADERS += sources/mui.h \
     sources/about.h \
-    sources/playlistmodel.h \
     sources/volumeslider.h \
     sources/metadatawidget.h \
     sources/errorlog.h \
     sources/editstyle.h \
-    sources/constants.h \
     sources/artdata.h \
     sources/filesystembrowser.h \
     sources/musicdatamodel.h \
@@ -31,7 +29,6 @@ FORMS += ui/mui.ui \
 SOURCES += sources/main.cpp \
     sources/mui.cpp \
     sources/about.cpp \
-    sources/playlistmodel.cpp \
     sources/volumeslider.cpp \
     sources/metadatawidget.cpp \
     sources/errorlog.cpp \

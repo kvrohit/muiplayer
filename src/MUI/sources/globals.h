@@ -14,6 +14,8 @@ namespace Mui {
     const QString WelcomeText       =   "Welcome to MUI";
     const QString ZeroTime          =   "00:00";
     const QString ModelDataFileName =   "/mui_music_data.dat";
+    const QString PlaylistFilter    =   "Playlist (*.m3u);;All Files (*.*)";
+    const QString AudioFilter       =   "Audio (*.mp3 *.aac *.mp4 *.ogg);;All files (*.*)";
 
     const qint32 MagicNumber        =   0x69696969;
 
