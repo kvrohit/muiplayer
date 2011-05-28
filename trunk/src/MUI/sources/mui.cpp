@@ -24,7 +24,9 @@ MUI::MUI(QWidget *parent, Qt::WFlags flags)
     FileSystemBrowser *fsBrowser = new FileSystemBrowser(fsDock);
     fsDock->setWidget(fsBrowser);
     addDockWidget(Qt::RightDockWidgetArea, fsDock);
-    // ui.menuView->addAction(dock->toggleViewAction());
+
+    ui.menuView->addAction(dock->toggleViewAction());
+    ui.menuView->addAction(fsDock->toggleViewAction());
     // End dock widget
 
     // Sliders and Icons
@@ -157,37 +159,35 @@ void MUI::play()
 
 void MUI::next()
 {
-    int rc = model.rowCount();
-    int currentRow = nowPlayingIndex.row();
-    if(currentRow == (--rc)) {
-        stop();
-        return;
-    }
-    model.updateIcon(currentRow, Mui::STOPPED_STATE);
-
-    ui.treeView->selectionModel()->setCurrentIndex(
-            ui.treeView->indexBelow(nowPlayingIndex),
-            QItemSelectionModel::Rows | QItemSelectionModel::ClearAndSelect);
-
-    handleDoubleClick(ui.treeView->currentIndex());
+    doSelect(nowPlayingIndex, ui.treeView->indexBelow(nowPlayingIndex));
 }
 
 void MUI::previous()
 {
-    int currentRow = nowPlayingIndex.row();
-    if (currentRow == 0) return;
-    model.updateIcon(currentRow, Mui::STOPPED_STATE);
-    ui.treeView->selectionModel()->clearSelection();
-    ui.treeView->selectionModel()->setCurrentIndex(
-            ui.treeView->indexAbove(nowPlayingIndex),
-            QItemSelectionModel::Rows | QItemSelectionModel::ClearAndSelect);
-    handleDoubleClick(ui.treeView->currentIndex());
+    doSelect(nowPlayingIndex, ui.treeView->indexAbove(nowPlayingIndex));
+}
+
+void MUI::doSelect(const QModelIndex &currentIndex, const QModelIndex &newIndex)
+{
+    if(!newIndex.isValid()) {
+        return;
+    }
+
+    QItemSelectionModel *selectionModel = ui.treeView->selectionModel();
+    QItemSelection rowSelection;
+
+    ui.treeView->setCurrentIndex(newIndex);
+    rowSelection.select(newIndex, newIndex);
+    selectionModel->select(rowSelection, QItemSelectionModel::ClearAndSelect
+                           | QItemSelectionModel::Rows);
+    model.updateIcon(currentIndex.row(), Mui::STOPPED_STATE);
+    handleDoubleClick(newIndex);
 }
 
 void MUI::openPlaylist()
 {
     QString filename = QFileDialog::getOpenFileName(this, "Open Playlist", "/",
-        "Playlist (*.m3u);;All Files (*.*)");
+        Mui::PlaylistFilter);
 
     if(filename.isEmpty()) {
         return;
@@ -199,7 +199,7 @@ void MUI::openPlaylist()
 void MUI::savePlaylist()
 {
     QString filename = QFileDialog::getSaveFileName(this, "Save Playlist", "/",
-        "Playlist (*.m3u);;All Files (*.*)");
+        Mui::PlaylistFilter);
 
     if(filename.isEmpty()) {
         return;
@@ -211,7 +211,7 @@ void MUI::savePlaylist()
 void MUI::addMusicFiles()
 {
     QStringList files = QFileDialog::getOpenFileNames(this, "Open", "/",
-        "Audio (*.mp3 *.aac *.mp4 *.ogg);;All files (*.*)");
+        Mui::AudioFilter);
 
     foreach(QString filename, files) {
         model.appendData(filename);
@@ -363,8 +363,6 @@ void MUI::setupSignalsAndSlots()
     connect(ui.actionAddMusicFiles, SIGNAL(triggered()),
             this, SLOT(addMusicFiles()));
 
-    /*connect(ui.buttonAdd, SIGNAL(clicked()),
-        this, SLOT(addMusicFiles()));*/
     connect(ui.actionNext, SIGNAL(triggered()),
         this, SLOT(next()));
     connect(ui.actionPrevious, SIGNAL(triggered()),

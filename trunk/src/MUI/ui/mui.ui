@@ -98,12 +98,12 @@
      <x>0</x>
      <y>0</y>
      <width>761</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
     <addaction name="actionAddMusicFiles"/>
     <addaction name="separator"/>
@@ -111,7 +111,7 @@
    </widget>
    <widget class="QMenu" name="menuPlaylist">
     <property name="title">
-     <string>Playlist</string>
+     <string>&amp;Playlist</string>
     </property>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
@@ -120,14 +120,29 @@
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Help</string>
+     <string>&amp;Help</string>
     </property>
     <addaction name="actionErrorLog"/>
     <addaction name="actionEditStyleSheet"/>
     <addaction name="separator"/>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuP_layback">
+    <property name="title">
+     <string>P&amp;layback</string>
+    </property>
+    <addaction name="actionPrevious"/>
+    <addaction name="actionPlay"/>
+    <addaction name="actionNext"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuView"/>
+   <addaction name="menuP_layback"/>
    <addaction name="menuPlaylist"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -137,7 +152,7 @@
      <normaloff>:/images/images/help.png</normaloff>:/images/images/help.png</iconset>
    </property>
    <property name="text">
-    <string>About</string>
+    <string>About &amp;MUI</string>
    </property>
   </action>
   <action name="actionExit">
@@ -146,7 +161,7 @@
      <normaloff>:/images/images/exit.png</normaloff>:/images/images/exit.png</iconset>
    </property>
    <property name="text">
-    <string>Exit</string>
+    <string>E&amp;xit</string>
    </property>
   </action>
   <action name="actionOpen">
@@ -156,6 +171,9 @@
    </property>
    <property name="text">
     <string>Open...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionClear">
@@ -175,6 +193,9 @@
    <property name="text">
     <string>Save...</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
   </action>
   <action name="actionPlay">
    <property name="icon">
@@ -183,6 +204,9 @@
    </property>
    <property name="text">
     <string>Play</string>
+   </property>
+   <property name="shortcut">
+    <string>Space</string>
    </property>
   </action>
   <action name="actionNext">
@@ -193,6 +217,9 @@
    <property name="text">
     <string>Next</string>
    </property>
+   <property name="shortcut">
+    <string>N</string>
+   </property>
   </action>
   <action name="actionPrevious">
    <property name="icon">
@@ -201,6 +228,9 @@
    </property>
    <property name="text">
     <string>Previous</string>
+   </property>
+   <property name="shortcut">
+    <string>P</string>
    </property>
   </action>
   <action name="actionErrorLog">
@@ -211,11 +241,6 @@
   <action name="actionEditStyleSheet">
    <property name="text">
     <string>Edit Style Sheet...</string>
-   </property>
-  </action>
-  <action name="action_Exit">
-   <property name="text">
-    <string>&amp;Exit</string>
    </property>
   </action>
   <action name="actionAddMusicFiles">

@@ -14,7 +14,7 @@ QString MusicData::valueAt(int index) const
 {
     switch(index) {
     case Mui::STATEICON:
-        return QString();
+        return NULL;
     case Mui::SONGTITLE:
         return songtitle;
     case Mui::ARTIST:

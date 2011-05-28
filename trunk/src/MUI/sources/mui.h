@@ -71,6 +71,7 @@ private:
     void saveSettings();
     void closeEvent(QCloseEvent *);
     void setupSignalsAndSlots();
+    void doSelect(const QModelIndex&, const QModelIndex&);
 
     AudioTag::TagReader tagreader;
     AudioTag::GenericTag tag;
