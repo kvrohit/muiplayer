@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/images">
+    <qresource prefix="/">
         <file>images/noart.jpg</file>
         <file>images/add.png</file>
         <file>images/clear.png</file>

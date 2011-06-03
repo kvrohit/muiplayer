@@ -28,7 +28,7 @@
         </sizepolicy>
        </property>
        <property name="pixmap">
-        <pixmap resource="../rcc/res.qrc">:/images/images/juk.png</pixmap>
+        <pixmap resource="../rcc/res.qrc">:/images/juk.png</pixmap>
        </property>
       </widget>
      </item>
@@ -176,8 +176,8 @@ p, li { white-space: pre-wrap; }
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>259</width>
-            <height>258</height>
+            <width>194</width>
+            <height>273</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_10">
