@@ -5,11 +5,11 @@
 #include <QDebug>
 
 namespace Mui {
-    const QString PlayIcon          =   ":/images/images/play_2.png";
-    const QString PauseIcon         =   ":/images/images/pause_2.png";
-    const QString MediaPlaybackIcon =   ":/images/images/media_playback_start.png";
-    const QString MediaPauseIcon    =   ":/images/images/media_playback_pause.png";
-    const QString NoAlbumArt        =   ":/images/images/noart.jpg";
+    const QString PlayIcon          =   ":/images/play_2.png";
+    const QString PauseIcon         =   ":/images/pause_2.png";
+    const QString MediaPlaybackIcon =   ":/images/media_playback_start.png";
+    const QString MediaPauseIcon    =   ":/images/media_playback_pause.png";
+    const QString NoAlbumArt        =   ":/images/noart.jpg";
     const QString MUIVersion        =   "0.0.3";
     const QString WelcomeText       =   "Welcome to MUI";
     const QString ZeroTime          =   "00:00";

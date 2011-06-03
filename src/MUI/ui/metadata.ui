@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>200</width>
-    <height>284</height>
+    <height>299</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,7 +41,7 @@
       </size>
      </property>
      <property name="pixmap">
-      <pixmap resource="../rcc/res.qrc">:/images/images/noart.jpg</pixmap>
+      <pixmap resource="../rcc/res.qrc">:/images/noart.jpg</pixmap>
      </property>
      <property name="scaledContents">
       <bool>true</bool>
