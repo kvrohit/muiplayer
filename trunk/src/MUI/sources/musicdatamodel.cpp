@@ -128,7 +128,7 @@ bool MusicDataModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
                 delete it;
             }
             else {
-                appendData(url.toLocalFile());
+                appendData(filepath);
             }
         }
     }
