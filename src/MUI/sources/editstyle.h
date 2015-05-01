@@ -1,7 +1,7 @@
 #ifndef EDITSTYLE_H
 #define EDITSTYLE_H
 
-#include <QtGui>
+#include <QtWidgets>
 #include "ui_editstyle.h"
 
 class EditStyle : public QDialog

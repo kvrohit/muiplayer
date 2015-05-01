@@ -1,7 +1,7 @@
 #ifndef MUI_H
 #define MUI_H
 
-#include <QtGui>
+#include <QtWidgets>
 
 #include "ui_mui.h"
 #include "volumeslider.h"
@@ -25,7 +25,7 @@ class MUI : public QMainWindow
 {
     Q_OBJECT
 public:
-    MUI(QWidget *parent = 0, Qt::WFlags flags = 0);
+    MUI(QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~MUI();
 
 private slots:

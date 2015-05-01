@@ -284,7 +284,7 @@ void MusicDataModel::save()
 void MusicDataModel::resetData()
 {
     list.clear();
-    reset();
+    // reset();
     qDeleteAll(list);
 }
 

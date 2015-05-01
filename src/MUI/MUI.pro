@@ -1,7 +1,8 @@
 # MUI QT PROJECT FILE
 # Modify this if new project files are added
 TEMPLATE = app
-TARGET =
+TARGET = mui
+QT += widgets
 DEPENDPATH += . \
     rcc \
     sources \

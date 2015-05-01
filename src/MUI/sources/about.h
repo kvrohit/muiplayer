@@ -1,7 +1,7 @@
 #ifndef ABOUT_H
 #define ABOUT_H
 
-#include <QtGui>
+#include <QtWidgets>
 #include "ui_about.h"
 #include "cfmod.hpp"
 #include "cplaylist.hpp"

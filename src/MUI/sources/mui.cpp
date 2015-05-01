@@ -1,6 +1,6 @@
 #include "mui.h"
 
-MUI::MUI(QWidget *parent, Qt::WFlags flags)
+MUI::MUI(QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags)
 {
     ui.setupUi(this);

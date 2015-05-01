@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QImage>
 #include <QPixmap>
-#include <QtGui>
+#include <QtWidgets>
 #include <iostream>
 #include <cstddef>
 
