@@ -18,15 +18,7 @@ MUI::MUI(QWidget *parent, Qt::WindowFlags flags)
     dock->setWidget(mdWidget);
     addDockWidget(Qt::RightDockWidgetArea, dock);
 
-    QDockWidget *fsDock = new QDockWidget(this);
-    fsDock->setObjectName("fsDock");
-    fsDock->setWindowTitle("File System Browser");
-    FileSystemBrowser *fsBrowser = new FileSystemBrowser(fsDock);
-    fsDock->setWidget(fsBrowser);
-    addDockWidget(Qt::RightDockWidgetArea, fsDock);
-
     ui.menuView->addAction(dock->toggleViewAction());
-    ui.menuView->addAction(fsDock->toggleViewAction());
     // End dock widget
 
     // Sliders and Icons
@@ -54,11 +46,6 @@ MUI::MUI(QWidget *parent, Qt::WindowFlags flags)
 void MUI::showAboutBox()
 {
     aboutDialog->show();
-}
-
-void MUI::showErrorDialog()
-{
-    log.show();
 }
 
 void MUI::handleDoubleClick(const QModelIndex &index)
@@ -95,7 +82,7 @@ void MUI::handleDoubleClick(const QModelIndex &index)
             artDataWidget->setAlbumArt(filepath, tag.artfile.c_str());
         }
         catch(AudioTag::TagException &tex) {
-            log.append(tex.what());
+
         }
 
         artDataWidget->setTotalTime(Mui::formatTimeToQString(lenms));
@@ -112,7 +99,7 @@ void MUI::handleDoubleClick(const QModelIndex &index)
         nowPlayingIndex = index;
     }
     catch(FMOD::FMODException &e) {
-        log.append(e.what());
+
     }
 }
 
@@ -261,7 +248,7 @@ void MUI::sVolume(int value)
         p->setVolume(v);
     }
     catch(FMOD::FMODException &e) {
-        log.append(e.what());
+
     }
 }
 
@@ -358,8 +345,6 @@ void MUI::setupSignalsAndSlots()
         this, SLOT(clear()));
     connect(ui.actionAbout, SIGNAL(triggered()),
         this, SLOT(showAboutBox()));
-    connect(ui.actionErrorLog, SIGNAL(triggered()),
-        this, SLOT(showErrorDialog()));
     connect(ui.actionAddMusicFiles, SIGNAL(triggered()),
             this, SLOT(addMusicFiles()));
 
@@ -373,14 +358,6 @@ void MUI::setupSignalsAndSlots()
     connect(ui.treeView, SIGNAL(activated(const QModelIndex &)),
         this, SLOT(handleDoubleClick(const QModelIndex &)));
 
-    connect(ui.actionEditStyleSheet, SIGNAL(triggered()),
-        this, SLOT(editStyleSheet()));
-}
-
-void MUI::editStyleSheet()
-{
-    EditStyle *editStyleDialog = new EditStyle;
-    editStyleDialog->show();
 }
 
 MUI::~MUI()

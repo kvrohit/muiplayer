@@ -6,11 +6,8 @@
 #include "ui_mui.h"
 #include "volumeslider.h"
 #include "metadatawidget.h"
-#include "filesystembrowser.h"
 #include "artdata.h"
-#include "errorlog.h"
 #include "about.h"
-#include "editstyle.h"
 
 #include "musicdata.h"
 #include "musicdatamodel.h"
@@ -44,16 +41,13 @@ private slots:
     void sVolume(int);
 
     void addMusicFiles();
-    void showErrorDialog();
     void openPlaylist();
     void savePlaylist();
     void clear();
-    void editStyleSheet();
     void showAboutBox();
 
 private:
     Ui::MUIClass ui;
-    ErrorLog log;
     QModelIndex nowPlayingIndex;
     MusicDataModel model;
 
