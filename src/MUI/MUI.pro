@@ -15,27 +15,19 @@ HEADERS += sources/mui.h \
     sources/about.h \
     sources/volumeslider.h \
     sources/metadatawidget.h \
-    sources/errorlog.h \
-    sources/editstyle.h \
     sources/artdata.h \
-    sources/filesystembrowser.h \
     sources/musicdatamodel.h \
     sources/musicdata.h \
     sources/globals.h
 FORMS += ui/mui.ui \
     ui/about.ui \
-    ui/metadata.ui \
-    ui/errorlog.ui \
-    ui/editstyle.ui
+    ui/metadata.ui
 SOURCES += sources/main.cpp \
     sources/mui.cpp \
     sources/about.cpp \
     sources/volumeslider.cpp \
     sources/metadatawidget.cpp \
-    sources/errorlog.cpp \
-    sources/editstyle.cpp \
     sources/artdata.cpp \
-    sources/filesystembrowser.cpp \
     sources/musicdatamodel.cpp \
     sources/musicdata.cpp \
     sources/globals.cpp
