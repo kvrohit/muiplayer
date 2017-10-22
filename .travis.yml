@@ -1,13 +1,13 @@
 language: cpp
+sudo: required
+dist: trusty
 
 before_install:
-    # For gcc-6
-    - sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1397BC53640DB551
-    - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
-
-    # For Qt 5.7
     - sudo add-apt-repository --yes ppa:beineri/opt-qt571-trusty
-    - sudo apt-get install -qq g++-7 qt57-meta-full
+    - sudo apt-get update -qq
+
+install:
+    - sudo apt-get install qt57-meta-full
 
 script:
     - source /opt/qt57/bin/qt57-env.sh
