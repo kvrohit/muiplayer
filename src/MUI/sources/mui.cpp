@@ -45,7 +45,7 @@ MUI::MUI(QWidget *parent, Qt::WindowFlags flags)
     setupSignalsAndSlots();
     loadSettings();
 
-    showHideMenuBar(isMenuBarVisible);
+    toggleMenuBar(isMenuBarVisible);
 }
 
 void MUI::showAboutBox()
@@ -366,23 +366,29 @@ void MUI::setupSignalsAndSlots()
         this, SLOT(handleDoubleClick(const QModelIndex &)));
 
     connect(ui.actionShowMenuBar, SIGNAL(toggled(bool)),
-        this, SLOT(showHideMenuBar(bool)));
+        this, SLOT(toggleMenuBar(bool)));
 }
 
-void MUI::keyReleaseEvent(QKeyEvent *e) {
-    if (!isMenuBarVisible) {
-        if (e->modifiers() == (Qt::ShiftModifier | Qt::ControlModifier)) {
-            if (e->key() == Qt::Key_M) {
-                showHideMenuBar(true);
-            }
+void MUI::keyPressEvent(QKeyEvent *e) {
+    if (e->key() == Qt::Key_Alt) {
+        if (!isMenuBarVisible) {
+            ui.menuBar->setVisible(true);
         }
     }
 }
 
-void MUI::showHideMenuBar(bool checked) {
-    ui.actionShowMenuBar->setChecked(checked);
-    ui.menuBar->setVisible(checked);
-    isMenuBarVisible = checked;
+void MUI::keyReleaseEvent(QKeyEvent *e) {
+    if (e->key() == Qt::Key_Alt) {
+        if (!isMenuBarVisible) {
+            ui.menuBar->setVisible(false);
+        }
+    }
+}
+
+void MUI::toggleMenuBar(bool visible) {
+    ui.actionShowMenuBar->setChecked(visible);
+    ui.menuBar->setVisible(visible);
+    isMenuBarVisible = visible;
 }
 
 void MUI::setupKeyboardShortcuts() {

@@ -45,7 +45,7 @@ private slots:
     void savePlaylist();
     void clear();
     void showAboutBox();
-    void showHideMenuBar(bool);
+    void toggleMenuBar(bool);
 
 private:
     Ui::MUIClass ui;
@@ -73,6 +73,7 @@ private:
     AudioTag::TagReader tagreader;
     AudioTag::GenericTag tag;
 
+    void keyPressEvent(QKeyEvent *);
     void keyReleaseEvent(QKeyEvent *);
 };
 #endif // MUI_H
