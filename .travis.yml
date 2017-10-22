@@ -7,7 +7,7 @@ before_install:
 
     # For Qt 5.7
     - sudo add-apt-repository --yes ppa:beineri/opt-qt571-trusty
-    - sudo apt-get install -qq g++-6 qt57-meta-full
+    - sudo apt-get install -qq gcc-7 qt57-meta
 
 script:
     - QT_ENV_SCRIPT=$(find /opt -name 'qt*-env.sh')
