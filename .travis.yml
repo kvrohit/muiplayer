@@ -6,7 +6,7 @@ before_install:
     - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
 
     # For Qt 5.7
-    - sudo add-apt-repository --yes ppa:beineri/opt-qt57-trusty
+    - sudo add-apt-repository --yes ppa:beineri/opt-qt571-trusty
     - sudo apt-get install -qq g++-6 qt57-meta-full
 
 script:
