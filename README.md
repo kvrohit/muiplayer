@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/kvrohit/muiplayer.svg?branch=master)](https://travis-ci.org/kvrohit/muiplayer)
+
 # MUI #
 
 **MUI**, _MUI mUsic Interface_, is an open-source cross platform media player written using Qt and FMOD.
