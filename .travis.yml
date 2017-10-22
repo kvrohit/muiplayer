@@ -1,8 +1,16 @@
 language: cpp
+
 before_install:
-    - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
-    - sudo apt-get update -qq
-    - sudo apt-get install -qq qt5-qmake qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev
+    # For gcc-6
+    - sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1397BC53640DB551
+    - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
+
+    # For Qt 5.7
+    - sudo add-apt-repository --yes ppa:beineri/opt-qt57-trusty
+    - sudo apt-get install -qq g++-6 qt57-meta-full
+
 script:
-    - qmake -qt=qt5 -v
+    - QT_ENV_SCRIPT=$(find /opt -name 'qt*-env.sh')
+    - source $QT_ENV_SCRIPT
+    - qmake
     - ./makeall
