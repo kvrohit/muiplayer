@@ -7,6 +7,8 @@ MUI::MUI(QWidget *parent, Qt::WindowFlags flags)
 
     aboutDialog = new About(this);
 
+    this->createPopupMenu();
+
     ui.treeView->setModel(&model);
     ui.treeView->hideColumn(Mui::FILEPATH);
 
@@ -39,8 +41,11 @@ MUI::MUI(QWidget *parent, Qt::WindowFlags flags)
 
     artDataWidget->m_seekBar->setRange(0, 0);
 
+    setupKeyboardShortcuts();
     setupSignalsAndSlots();
     loadSettings();
+
+    toggleMenuBar(isMenuBarVisible);
 }
 
 void MUI::showAboutBox()
@@ -261,6 +266,7 @@ void MUI::loadSettings()
     restoreGeometry(settings.value("geometry").toByteArray());
     volume = settings.value("vol", 100).toInt();
     // sliderVolume->setValue(volume);
+    isMenuBarVisible = settings.value("menuBarVisible", true).toBool();
     settings.endGroup();
 
     settings.beginGroup("ColumnWidth");
@@ -302,6 +308,7 @@ void MUI::saveSettings()
     settings.setValue("state", saveState());
     settings.setValue("geometry", saveGeometry());
     // settings.setValue("vol", sliderVolume->value());
+    settings.setValue("menuBarVisible", isMenuBarVisible);
     settings.endGroup();
 
     settings.beginGroup("ColumnWidth");
@@ -358,6 +365,37 @@ void MUI::setupSignalsAndSlots()
     connect(ui.treeView, SIGNAL(activated(const QModelIndex &)),
         this, SLOT(handleDoubleClick(const QModelIndex &)));
 
+    connect(ui.actionShowMenuBar, SIGNAL(toggled(bool)),
+        this, SLOT(toggleMenuBar(bool)));
+}
+
+void MUI::keyPressEvent(QKeyEvent *e) {
+    if (e->key() == Qt::Key_Alt) {
+        if (!isMenuBarVisible) {
+            ui.menuBar->setVisible(true);
+        }
+    }
+}
+
+void MUI::keyReleaseEvent(QKeyEvent *e) {
+    if (e->key() == Qt::Key_Alt) {
+        if (!isMenuBarVisible) {
+            ui.menuBar->setVisible(false);
+        }
+    }
+}
+
+void MUI::toggleMenuBar(bool visible) {
+    ui.actionShowMenuBar->setChecked(visible);
+    ui.menuBar->setVisible(visible);
+    isMenuBarVisible = visible;
+}
+
+void MUI::setupKeyboardShortcuts() {
+    ui.actionExit->setShortcut(QKeySequence::Quit);
+    ui.actionSave->setShortcut(QKeySequence::Save);
+    ui.actionOpen->setShortcut(QKeySequence::Open);
+    ui.actionShowMenuBar->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_M));
 }
 
 MUI::~MUI()

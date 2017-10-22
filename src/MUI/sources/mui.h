@@ -45,6 +45,7 @@ private slots:
     void savePlaylist();
     void clear();
     void showAboutBox();
+    void toggleMenuBar(bool);
 
 private:
     Ui::MUIClass ui;
@@ -60,14 +61,19 @@ private:
     int ms, lenms;
     int volume;
     bool isPlaying, isPaused;
+    bool isMenuBarVisible;
 
     void loadSettings();
     void saveSettings();
     void closeEvent(QCloseEvent *);
     void setupSignalsAndSlots();
+    void setupKeyboardShortcuts();
     void doSelect(const QModelIndex&, const QModelIndex&);
 
     AudioTag::TagReader tagreader;
     AudioTag::GenericTag tag;
+
+    void keyPressEvent(QKeyEvent *);
+    void keyReleaseEvent(QKeyEvent *);
 };
 #endif // MUI_H
