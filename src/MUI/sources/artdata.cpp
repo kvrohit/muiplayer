@@ -59,6 +59,10 @@ void ArtData::setSongTitle(const QString &songTitle)
     m_songTitleLabel->setText(songTitle);
 }
 
+void ArtData::setAlbumArt(const QImage &image) {
+    m_albumArtLabel->setPixmap(QPixmap::fromImage(image));
+}
+
 void ArtData::setAlbumArt(const QString &filePath, const QString &albumArtPath)
 {
     QImage qImage;

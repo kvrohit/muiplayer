@@ -2,6 +2,8 @@
 #define MUI_H
 
 #include <QtWidgets>
+#include <QMediaPlayer>
+#include <QMediaMetaData>
 
 #include "ui_mui.h"
 #include "volumeslider.h"
@@ -12,7 +14,6 @@
 #include "musicdata.h"
 #include "musicdatamodel.h"
 
-#include "cfmod.hpp"
 #include "caudiotags.hpp"
 
 #include "globals.h"
@@ -28,17 +29,13 @@ public:
 private slots:
     // Media playback related slots
     void handleDoubleClick(const QModelIndex &);
-    void displayTime();
+    void positionChanged(qint64);
+    void durationChanged(qint64);
+    void metaDataAvailable(bool available);
     void stop();
     void play();
     void next();
     void previous();
-
-    // Slider related slots
-    void sSeek();
-    void sFreeze();
-    void sMove(int);
-    void sVolume(int);
 
     void addMusicFiles();
     void openPlaylist();
@@ -52,13 +49,12 @@ private:
     QModelIndex nowPlayingIndex;
     MusicDataModel model;
 
-    FMOD::Player *p;
-    QTimer *timer;
+    QMediaPlayer *player;
     MetaDataWidget *mdWidget;
     About *aboutDialog;
     ArtData *artDataWidget;
 
-    int ms, lenms;
+    qint64 ms, lenms;
     int volume;
     bool isPlaying, isPaused;
     bool isMenuBarVisible;

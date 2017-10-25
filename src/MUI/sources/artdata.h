@@ -30,6 +30,7 @@ public:
     void setCurrentTime(const QString &currentTime);
     void setSongTitle(const QString &songTitle);
 
+    void setAlbumArt(const QImage &);
     void setAlbumArt(const QString &filePath, const QString &albumArtPath);
     void reset();
 

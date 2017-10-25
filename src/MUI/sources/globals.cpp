@@ -82,7 +82,7 @@ QString Mui::convertToUnicode(const std::string &data)
     return unicode;
 }
 
-QString Mui::formatTimeToQString(quint32 duration)
+QString Mui::formatTimeToQString(quint64 duration)
 {
     QString strTime;
     strTime.sprintf("%02d:%02d", duration / 1000 / 60, duration / 1000 % 60);

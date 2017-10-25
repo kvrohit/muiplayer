@@ -23,7 +23,7 @@ namespace Mui {
     enum IconState { PLAY_STATE, PAUSED_STATE, STOPPED_STATE };
 
     QString convertToUnicode(const std::string &data);
-    QString formatTimeToQString(quint32 duration);
+    QString formatTimeToQString(quint64 duration);
 };
 
 #endif

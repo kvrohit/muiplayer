@@ -137,7 +137,6 @@ bool MusicDataModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
 
 void MusicDataModel::appendData(const QString &filepath)
 {
-    FMOD::Player p;
     if(!isSupportedFormat(filepath)) {
         return;
     }
@@ -150,7 +149,7 @@ void MusicDataModel::appendData(const QString &filepath)
     try {
         reader.renderFile(filepath.toStdString());
         tag = reader.getTag();
-        lenms = p.getLengthFromName(filepath.toStdString());
+        lenms = 0;
 
         beginInsertRows(QModelIndex(), row, row);
         list.insert(row, new MusicData(Mui::convertToUnicode(tag.title),
