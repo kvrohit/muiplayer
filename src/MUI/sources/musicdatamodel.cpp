@@ -28,7 +28,7 @@ QVariant MusicDataModel::headerData(int section, Qt::Orientation orientation,
     default:
         return QVariant();
     }
-};
+}
 
 int MusicDataModel::columnCount(const QModelIndex & /* parent */) const
 {
@@ -137,7 +137,7 @@ bool MusicDataModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
 
 void MusicDataModel::appendData(const QString &filepath)
 {
-    if(!isSupportedFormat(filepath)) {
+    if (!isSupportedFormat(filepath)) {
         return;
     }
 
@@ -147,14 +147,14 @@ void MusicDataModel::appendData(const QString &filepath)
     quint32 lenms;
 
     try {
-        reader.renderFile(filepath.toStdString());
-        tag = reader.getTag();
+        //reader.renderFile(filepath.toStdString());
+        //tag = reader.getTag();
         lenms = 0;
 
         beginInsertRows(QModelIndex(), row, row);
-        list.insert(row, new MusicData(Mui::convertToUnicode(tag.title),
-                                       Mui::convertToUnicode(tag.album),
-                                       Mui::convertToUnicode(tag.artist),
+        list.insert(row, new MusicData(Mui::convertToUnicode("Dummy title"),
+                                       Mui::convertToUnicode("Dummy album"),
+                                       Mui::convertToUnicode("Dummy artist"),
                                        filepath,
                                        Mui::formatTimeToQString(lenms)));
         endInsertRows();

@@ -23,7 +23,8 @@ HEADERS += sources/mui.h \
     sources/artdata.h \
     sources/musicdatamodel.h \
     sources/musicdata.h \
-    sources/globals.h
+    sources/globals.h \
+    sources/metadata.h
 
 FORMS += ui/mui.ui \
     ui/about.ui \

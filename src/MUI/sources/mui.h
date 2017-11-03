@@ -11,6 +11,7 @@
 #include "artdata.h"
 #include "about.h"
 
+#include "metadata.h"
 #include "musicdata.h"
 #include "musicdatamodel.h"
 
@@ -32,6 +33,8 @@ private slots:
     void positionChanged(qint64);
     void durationChanged(qint64);
     void metaDataAvailable(bool available);
+    void stateChanged(QMediaPlayer::State state);
+    void mediaStatusChanged(QMediaPlayer::MediaStatus status);
     void stop();
     void play();
     void next();

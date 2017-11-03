@@ -19,7 +19,7 @@
 
 const int COLUMNCOUNT = 6;
 const int FILEPATHROLE = Qt::UserRole + 1;
-const QString SUPPORTEDFORMATS = "aiff asf flac fsb it mid midi mod mp2 mp3 ogg raw s3m xm";
+const QString SUPPORTEDFORMATS = "aiff asf flac fsb it mid midi mod mp2 mp3 ogg raw s3m xm mp4 m4a";
 
 class MusicDataModel : public QAbstractTableModel
 {
