@@ -45,15 +45,15 @@ QVariant MusicDataModel::data(const QModelIndex &index, int role) const {
     int nColumn = index.column();
 
     // Handle the DecorationRole only for the STATEICON column
-    if ((nColumn == 0) && (role == Qt::DecorationRole)) {
-        return QIcon(list.at(nRow)->icon);
-    }
+    //if ((nColumn == 0) && (role == Qt::DecorationRole)) {
+    //    return QIcon(list.at(nRow)->icon);
+    //}
 
     switch (role) {
     case Qt::DisplayRole:
         return list.at(nRow)->valueAt(nColumn);
     case FILEPATHROLE:
-        return list.at(nRow)->filepath;
+        return list.at(nRow)->tag.filepath;
     default:
         return QVariant();
     }
@@ -148,7 +148,7 @@ void MusicDataModel::appendData(const MusicData &data) {
 }
 
 void MusicDataModel::updateIcon(int row, Mui::IconState newState) {
-    list[row]->setIconState(newState);
+    //list[row]->setIconState(newState);
     emit dataChanged(index(row, 0), index(row, COLUMNCOUNT));
 }
 
@@ -176,7 +176,7 @@ void MusicDataModel::load() {
     }
 
     while (!in.atEnd()) {
-        in >> d.songtitle >> d.artist >> d.album >> d.duration >> d.filepath;
+        in >> d.tag.title >> d.tag.artist >> d.tag.album >> d.tag.duration >> d.tag.filepath;
         appendData(d);
     }
 
@@ -199,8 +199,8 @@ void MusicDataModel::save() {
     out << Mui::MagicNumber;
 
     for (int i = 0; i < list.count(); ++i) {
-        out << list[i]->songtitle << list[i]->artist << list[i]->album <<
-               list[i]->duration << list[i]->filepath;
+        out << list[i]->tag.title << list[i]->tag.artist << list[i]->tag.album <<
+               list[i]->tag.duration << list[i]->tag.filepath;
     }
 
     file.close();
@@ -222,23 +222,13 @@ bool MusicDataModel::isSupportedFormat(const QString &filepath) {
 void MusicDataModel::metaDataAvailable(const Meta::AudioTag &tag) {
     int row = rowCount();
     beginInsertRows(QModelIndex(), row, row);
-    list.insert(row, new MusicData(tag.title,
-                                   tag.artist,
-                                   tag.album,
-                                   tag.filepath,
-                                   Mui::formatTimeToQString(tag.duration)));
+    list.insert(row, new MusicData(tag));
     endInsertRows();
 }
 
 Meta::AudioTag MusicDataModel::audioTagAtIndex(const QModelIndex &index) const {
-    Meta::AudioTag tag;
     MusicData *d = list.at(index.row());
-    tag.album = d->album;
-    tag.artist = d->artist;
-    tag.duration = 0;
-    tag.title = d->songtitle;
-    tag.filepath = d->filepath;
-    return tag;
+    return d->tag;
 }
 
 MusicDataModel::~MusicDataModel() {

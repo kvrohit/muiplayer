@@ -1,60 +1,35 @@
 #include "musicdata.h"
 
-MusicData::MusicData(const MusicData &data)
-{
-    songtitle = data.songtitle;
-    artist = data.artist;
-    album = data.album;
-    duration = data.duration;
-    filepath = data.filepath;
-    icon = QIcon(data.icon);
+MusicData::MusicData() {
+
 }
 
-QString MusicData::valueAt(int index) const
-{
-    switch(index) {
+MusicData::MusicData(const Meta::AudioTag &tag) {
+    this->tag = tag;
+}
+
+QString MusicData::valueAt(int index) const {
+    switch (index) {
     case Mui::STATEICON:
         return NULL;
     case Mui::SONGTITLE:
-        return songtitle;
+        return tag.title;
     case Mui::ARTIST:
-        return artist;
+        return tag.artist;
     case Mui::ALBUM:
-        return album;
+        return tag.album;
     case Mui::DURATION:
-        return duration;
+        return Mui::formatTimeToQString(tag.duration);
     case Mui::FILEPATH:
-        return filepath;
+        return tag.filepath;
     default:
         return QString();
     }
 }
 
-void MusicData::setData(const MusicData &data)
-{
-    icon = QIcon(data.icon);
-    songtitle = data.songtitle;
-    artist = data.artist;
-    album = data.album;
-    filepath = data.filepath;
-    duration = data.duration;
+void MusicData::setData(const Meta::AudioTag &tag) {
+    this->tag = tag;
 }
 
-void MusicData::setIconState(Mui::IconState state)
-{
-    switch(state) {
-    case Mui::PLAY_STATE:
-        icon = QIcon(Mui::PlayIcon);
-        return;
-    case Mui::PAUSED_STATE:
-        icon = QIcon(Mui::PauseIcon);
-        return;
-    case Mui::STOPPED_STATE:
-    default:
-        icon = QIcon();
-    }
-}
-
-MusicData::~MusicData()
-{
+MusicData::~MusicData() {
 }
