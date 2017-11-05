@@ -45,7 +45,6 @@ void MUI::showAboutBox() {
 }
 
 void MUI::handleDoubleClick(const QModelIndex &index) {
-    int row = index.row();
     QString filepath = index.data(FILEPATHROLE).toString();
 
     if (isPlaying) {
@@ -97,7 +96,7 @@ void MUI::previous() {
     doSelect(nowPlayingIndex, ui.treeView->indexAbove(nowPlayingIndex));
 }
 
-void MUI::doSelect(const QModelIndex &currentIndex, const QModelIndex &newIndex) {
+void MUI::doSelect(const QModelIndex &/*currentIndex*/, const QModelIndex &newIndex) {
     if (!newIndex.isValid()) {
         return;
     }

@@ -16,7 +16,7 @@ namespace Mui {
     const QString ModelDataFileName =   "/mui_music_data.dat";
     const QString PlaylistFilter    =   "Playlist (*.m3u);;All Files (*.*)";
     const QString AudioFilter       =   "Audio (*.mp3 *.aac *.mp4 *.ogg *.flac *.m4a);;All files (*.*)";
-
+    const QString SupportedFormats  =   "aiff asf flac fsb it mid midi mod mp2 mp3 ogg raw s3m xm mp4 m4a";
     const qint32 MagicNumber        =   0x69696969;
 
     enum { STATEICON, SONGTITLE, ARTIST, ALBUM, DURATION, FILEPATH };

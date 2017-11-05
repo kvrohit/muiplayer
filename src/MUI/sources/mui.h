@@ -15,8 +15,6 @@
 #include "musicdata.h"
 #include "musicdatamodel.h"
 
-#include "caudiotags.hpp"
-
 #include "globals.h"
 #include <string>
 
@@ -32,9 +30,9 @@ private slots:
     void handleDoubleClick(const QModelIndex &);
     void positionChanged(qint64);
     void durationChanged(qint64);
-    void metaDataAvailable(bool available);
-    void stateChanged(QMediaPlayer::State state);
-    void mediaStatusChanged(QMediaPlayer::MediaStatus status);
+    void metaDataAvailable(bool);
+    void stateChanged(QMediaPlayer::State);
+    void mediaStatusChanged(QMediaPlayer::MediaStatus);
     void stop();
     void play();
     void next();

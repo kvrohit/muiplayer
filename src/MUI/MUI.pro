@@ -24,7 +24,8 @@ HEADERS += sources/mui.h \
     sources/musicdatamodel.h \
     sources/musicdata.h \
     sources/globals.h \
-    sources/metadata.h
+    sources/metadata.h \
+    sources/tagreader.h
 
 FORMS += ui/mui.ui \
     ui/about.ui \
@@ -38,7 +39,8 @@ SOURCES += sources/main.cpp \
     sources/artdata.cpp \
     sources/musicdatamodel.cpp \
     sources/musicdata.cpp \
-    sources/globals.cpp
+    sources/globals.cpp \
+    sources/tagreader.cpp
 
 RESOURCES += rcc/res.qrc
 

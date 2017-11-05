@@ -3,9 +3,6 @@
 
 #include <QtWidgets>
 #include "ui_about.h"
-#include "cfmod.hpp"
-#include "cplaylist.hpp"
-#include "caudiotags.hpp"
 #include "globals.h"
 
 class About : public QDialog

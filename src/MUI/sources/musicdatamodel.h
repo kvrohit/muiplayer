@@ -13,13 +13,13 @@
 #include <QDirIterator>
 
 #include "musicdata.h"
-#include "caudiotags.hpp"
-#include "cfmod.hpp"
+#include "metadata.h"
 #include "cplaylist.hpp"
+#include "tagreader.h"
+#include "globals.h"
 
 const int COLUMNCOUNT = 6;
 const int FILEPATHROLE = Qt::UserRole + 1;
-const QString SUPPORTEDFORMATS = "aiff asf flac fsb it mid midi mod mp2 mp3 ogg raw s3m xm mp4 m4a";
 
 class MusicDataModel : public QAbstractTableModel
 {
@@ -54,12 +54,12 @@ public:
 signals:
 
 public slots:
+    void metaDataAvailable(const Meta::AudioTag &);
 
 private:
     QList<MusicData*> list;
-
     bool isSupportedFormat(const QString &filepath);
-
+    TagReader *tagReader;
 };
 
 #endif // MUSICDATAMODEL_H

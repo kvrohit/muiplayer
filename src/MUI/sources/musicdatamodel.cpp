@@ -1,18 +1,20 @@
 #include "musicdatamodel.h"
 
 MusicDataModel::MusicDataModel(QObject *parent) :
-    QAbstractTableModel(parent)
-{
+    QAbstractTableModel(parent) {
+    tagReader = new TagReader(this);
+
+    connect(tagReader, SIGNAL(metaDataAvailable(Meta::AudioTag)),
+            this, SLOT(metaDataAvailable(Meta::AudioTag)));
 }
 
 QVariant MusicDataModel::headerData(int section, Qt::Orientation orientation,
-                                    int role) const
-{
-    if(role != Qt::DisplayRole || orientation != Qt::Horizontal) {
+                                    int role) const {
+    if (role != Qt::DisplayRole || orientation != Qt::Horizontal) {
         return QVariant();
     }
 
-    switch(section) {
+    switch (section) {
     case Mui::STATEICON:
         return QString("");
     case Mui::SONGTITLE:
@@ -30,27 +32,24 @@ QVariant MusicDataModel::headerData(int section, Qt::Orientation orientation,
     }
 }
 
-int MusicDataModel::columnCount(const QModelIndex & /* parent */) const
-{
+int MusicDataModel::columnCount(const QModelIndex & /* parent */) const {
     return COLUMNCOUNT;
 }
 
-int MusicDataModel::rowCount(const QModelIndex & /* parent */) const
-{
+int MusicDataModel::rowCount(const QModelIndex & /* parent */) const {
     return list.count();
 }
 
-QVariant MusicDataModel::data(const QModelIndex &index, int role) const
-{
+QVariant MusicDataModel::data(const QModelIndex &index, int role) const {
     int nRow = index.row();
     int nColumn = index.column();
 
     // Handle the DecorationRole only for the STATEICON column
-    if((nColumn == 0) && (role == Qt::DecorationRole)) {
+    if ((nColumn == 0) && (role == Qt::DecorationRole)) {
         return QIcon(list.at(nRow)->icon);
     }
 
-    switch(role) {
+    switch (role) {
     case Qt::DisplayRole:
         return list.at(nRow)->valueAt(nColumn);
     case FILEPATHROLE:
@@ -60,8 +59,7 @@ QVariant MusicDataModel::data(const QModelIndex &index, int role) const
     }
 }
 
-bool MusicDataModel::insertRows(int row, int count, const QModelIndex &parent)
-{
+bool MusicDataModel::insertRows(int row, int count, const QModelIndex &parent) {
     beginInsertRows(parent, row, row + count - 1);
     for(int i = 0; i < count; ++i) {
         list.insert(row, new MusicData());
@@ -70,29 +68,25 @@ bool MusicDataModel::insertRows(int row, int count, const QModelIndex &parent)
     return true;
 }
 
-bool MusicDataModel::removeRows(int row, int count, const QModelIndex &parent)
-{
+bool MusicDataModel::removeRows(int row, int count, const QModelIndex &parent) {
     beginRemoveRows(parent, row, row + count - 1);
-    for(int i = 0; i < count; ++i) {
+    for (int i = 0; i < count; ++i) {
         list.removeAt(row);
     }
     endRemoveRows();
     return true;
 }
 
-Qt::ItemFlags MusicDataModel::flags(const QModelIndex &/*index*/) const
-{
+Qt::ItemFlags MusicDataModel::flags(const QModelIndex &/*index*/) const {
     return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDropEnabled;
 }
 
-Qt::DropActions MusicDataModel::supportedDropActions() const
-{
+Qt::DropActions MusicDataModel::supportedDropActions() const {
     qDebug() << "supportedDropActions()";
     return Qt::CopyAction | Qt::MoveAction;
 }
 
-QStringList MusicDataModel::mimeTypes() const
-{
+QStringList MusicDataModel::mimeTypes() const {
     qDebug() << "mimeTypes()";
     QStringList mimeList;
     mimeList.append("text/uri-list");
@@ -102,25 +96,24 @@ QStringList MusicDataModel::mimeTypes() const
 
 bool MusicDataModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
                                   int /* row */, int /* column */,
-                                  const QModelIndex & /* parent */)
-{
+                                  const QModelIndex & /* parent */) {
     QString filepath;
     QFileInfo f;
-    if(action == Qt::IgnoreAction) {
+    if (action == Qt::IgnoreAction) {
         return true;
     }
 
-    if(data->hasUrls()) {
-        foreach(QUrl url, data->urls()) {
+    if (data->hasUrls()) {
+        foreach (QUrl url, data->urls()) {
             filepath = url.toLocalFile();
             f.setFile(filepath);
 
-            if(f.isDir()) {
+            if (f.isDir()) {
                 QDirIterator *it = new QDirIterator(
                             filepath, QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot,
                             QDirIterator::Subdirectories);
 
-                while(it->hasNext()) {
+                while (it->hasNext()) {
                     appendData(it->next());
                     qApp->processEvents(QEventLoop::AllEvents);
                 }
@@ -141,31 +134,13 @@ void MusicDataModel::appendData(const QString &filepath)
         return;
     }
 
-    int row = rowCount();
-    AudioTag::TagReader reader;
-    AudioTag::GenericTag tag;
-    quint32 lenms;
-
-    try {
-        //reader.renderFile(filepath.toStdString());
-        //tag = reader.getTag();
-        lenms = 0;
-
-        beginInsertRows(QModelIndex(), row, row);
-        list.insert(row, new MusicData(Mui::convertToUnicode("Dummy title"),
-                                       Mui::convertToUnicode("Dummy album"),
-                                       Mui::convertToUnicode("Dummy artist"),
-                                       filepath,
-                                       Mui::formatTimeToQString(lenms)));
-        endInsertRows();
-    }
-    catch(AudioTag::TagException &ex) {
-        qDebug() << QString::fromStdString(ex.what());
-    }
+    QEventLoop loop;
+    loop.connect(tagReader, SIGNAL(metaDataAvailable(Meta::AudioTag)), SLOT(quit()));
+    tagReader->readTag(filepath);
+    loop.exec();
 }
 
-void MusicDataModel::appendPlaylist(const QString &filepath)
-{
+void MusicDataModel::appendPlaylist(const QString &filepath) {
     MUIPlaylist::Playlist p;
     int length;
     std::string strTitle, strFilepath;
@@ -182,8 +157,7 @@ void MusicDataModel::appendPlaylist(const QString &filepath)
     }
 }
 
-void MusicDataModel::savePlaylist(const QString &filepath)
-{
+void MusicDataModel::savePlaylist(const QString &filepath) {
     MUIPlaylist::Playlist p;
     std::string strTitle, strPath, strLen, strFilepath;
     int length, min, sec;
@@ -210,29 +184,26 @@ void MusicDataModel::savePlaylist(const QString &filepath)
     }
 }
 
-void MusicDataModel::appendData(const MusicData &data)
-{
+void MusicDataModel::appendData(const MusicData &data) {
     int row = rowCount();
     beginInsertRows(QModelIndex(), row, row);
     list.insert(row, new MusicData(data));
     endInsertRows();
 }
 
-void MusicDataModel::updateIcon(int row, Mui::IconState newState)
-{
+void MusicDataModel::updateIcon(int row, Mui::IconState newState) {
     list[row]->setIconState(newState);
     emit dataChanged(index(row, 0), index(row, COLUMNCOUNT));
 }
 
-void MusicDataModel::load()
-{
+void MusicDataModel::load() {
     QString filepath = QCoreApplication::applicationDirPath();
     filepath.append(Mui::ModelDataFileName);
 
     QFile file(filepath);
     MusicData d;
 
-    if(!file.open(QIODevice::ReadOnly)) {
+    if (!file.open(QIODevice::ReadOnly)) {
         return;
     }
 
@@ -242,13 +213,13 @@ void MusicDataModel::load()
 
     in >> magicNumber;
 
-    if(magicNumber != Mui::MagicNumber) {
+    if (magicNumber != Mui::MagicNumber) {
         qDebug() << "Unsupported file format";
         file.close();
         return;
     }
 
-    while(!in.atEnd()) {
+    while (!in.atEnd()) {
         in >> d.songtitle >> d.artist >> d.album >> d.duration >> d.filepath;
         appendData(d);
     }
@@ -256,14 +227,13 @@ void MusicDataModel::load()
     file.close();
 }
 
-void MusicDataModel::save()
-{
+void MusicDataModel::save() {
     QString filepath = QCoreApplication::applicationDirPath();
     filepath.append(Mui::ModelDataFileName);
 
     QFile file(filepath);
 
-    if(!file.open(QIODevice::WriteOnly)) {
+    if (!file.open(QIODevice::WriteOnly)) {
         return;
     }
 
@@ -272,7 +242,7 @@ void MusicDataModel::save()
 
     out << Mui::MagicNumber;
 
-    for(int i = 0; i < list.count(); ++i) {
+    for (int i = 0; i < list.count(); ++i) {
         out << list[i]->songtitle << list[i]->artist << list[i]->album <<
                list[i]->duration << list[i]->filepath;
     }
@@ -280,23 +250,31 @@ void MusicDataModel::save()
     file.close();
 }
 
-void MusicDataModel::resetData()
-{
+void MusicDataModel::resetData() {
     list.clear();
-    // reset();
     qDeleteAll(list);
 }
 
-bool MusicDataModel::isSupportedFormat(const QString &filepath)
-{
+bool MusicDataModel::isSupportedFormat(const QString &filepath) {
     QString suffix = QFileInfo(filepath).suffix();
-    if(SUPPORTEDFORMATS.contains(suffix, Qt::CaseInsensitive)) {
+    if (Mui::SupportedFormats.contains(suffix, Qt::CaseInsensitive)) {
         return true;
     }
     return false;
 }
 
-MusicDataModel::~MusicDataModel()
-{
+void MusicDataModel::metaDataAvailable(const Meta::AudioTag &tag) {
+    int row = rowCount();
+    beginInsertRows(QModelIndex(), row, row);
+    list.insert(row, new MusicData(tag.title,
+                                   tag.artist,
+                                   tag.album,
+                                   tag.filepath,
+                                   Mui::formatTimeToQString(tag.duration)));
+    endInsertRows();
+}
+
+MusicDataModel::~MusicDataModel() {
     qDeleteAll(list);
+    delete tagReader;
 }
