@@ -6,4 +6,4 @@ Makefile
 ui/*.h
 rcc/*.cpp
 *.stash
-MUI.user.pro
+MUI.pro.user
