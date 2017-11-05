@@ -2,33 +2,25 @@
 
 # MUI #
 
-**MUI**, _MUI mUsic Interface_, is an open-source cross platform media player written using Qt and FMOD.
+**MUI**, _MUI mUsic Interface_, is an open-source cross platform media player written using Qt
 
-### Current status: ###
-version 0.0.3 (source)<br />
-Public versions: 0.0.2 (binaries)
+## Building ##
+Clone the project and run the following commands, binaries are stored in `bin`
 
-### Compiling ###
-**Linux**: Download and copy the FMOD .so files to /usr/lib and execute the 'makeall' script in the root MUI directory.
+```sh
+$ qmake
+$ make
+```
 
-**Windows**: Download and install FMOD. Run the 'makeall.bat' file.
+## Changelog ##
+0.0.4:
+  * Removed File system browser dock window
+  * Changed media engine to `Qt Multimedia`
+  * Removed 3rd party library dependencies, `FMOD` is out
+  * Metadata handling is done by Qt
+  * Support for several other file formats added (mp4, m4a, flac)
+  * Source code structure cleanup
 
-### Known Issues: ###
-0.0.3:
-  * Some features broken due to code overhaul (fixed)
-  * Does not accept/render files with unicode filenames
-  * For some files, meta data is not correctly extracted
-
-0.0.2:
-  * UI Rendering bugs in Ubuntu 8.04/Qt 4.3.4
-  * Unicode encoded tags not rendered properly (under testing)
-
-0.0.1:
-  * Does not handle M3U v1 playlists gracefully (fixed)
-  * Drag and Drop buggy in Win32 (fixed)
-  * Crashes while saving playlist, when the Duration column is empty (fixed)
-
-### Changelog: ###
 0.0.3:
   * Added File system browser dock window
   * Added a new toolbar to display the song meta data and album art
