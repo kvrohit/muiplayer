@@ -28,10 +28,13 @@ public:
 private slots:
     // Media playback related slots
     void handleDoubleClick(const QModelIndex &);
+
     void positionChanged(qint64);
     void durationChanged(qint64);
     void stateChanged(QMediaPlayer::State);
     void mediaStatusChanged(QMediaPlayer::MediaStatus);
+    void metaDataAvailableChanged(bool);
+
     void stop();
     void play();
     void next();

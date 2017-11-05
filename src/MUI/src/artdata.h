@@ -22,6 +22,7 @@ private:
 	QLabel *m_currentTimeLabel;
     QLabel *m_songTitleLabel;
 	QLabel *m_albumArtLabel;
+    QImage defaultAlbumArt;
 
 public:
     ArtData(QWidget *parent = 0);
@@ -31,7 +32,7 @@ public:
     void setSongTitle(const QString &songTitle);
 
     void setAlbumArt(const QImage &);
-    void setAlbumArt(const QString &filePath, const QString &albumArtPath);
+    void resetAlbumArt();
     void reset();
 
     QSlider *m_seekBar;

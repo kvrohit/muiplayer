@@ -19,11 +19,13 @@ class MetaDataWidget : public QWidget
     public:
         MetaDataWidget(QWidget *parent = 0);
         void setTag(const Meta::AudioTag &tag);
+        void setAlbumArt(const QImage &);
+        void resetAlbumArt();
         void reset();
 
     private:
         Ui::Metadata ui;
-        QImage m_qImage;
+        QImage defaultAlbumArt;
 };
 
 #endif

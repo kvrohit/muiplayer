@@ -1,7 +1,7 @@
 #include "artdata.h"
 
-ArtData::ArtData(QWidget *parent) : QWidget(parent)
-{
+ArtData::ArtData(QWidget *parent) : QWidget(parent) {
+    defaultAlbumArt = QImage(Mui::NoAlbumArt);
     QHBoxLayout *hBoxLayout = new QHBoxLayout(this);
     m_albumArtLabel = new QLabel(this);
 
@@ -32,8 +32,7 @@ ArtData::ArtData(QWidget *parent) : QWidget(parent)
 
     placeHolder->setLayout(vBoxLayout);
 
-    QImage qImage(Mui::NoAlbumArt);
-    m_albumArtLabel->setPixmap(QPixmap::fromImage(qImage));
+    m_albumArtLabel->setPixmap(QPixmap::fromImage(defaultAlbumArt));
     m_albumArtLabel->setFixedSize(48, 48);
     m_albumArtLabel->setScaledContents(true);
 
@@ -44,18 +43,15 @@ ArtData::ArtData(QWidget *parent) : QWidget(parent)
     this->setLayout(hBoxLayout);
 }
 
-void ArtData::setTotalTime(const QString &totalTime)
-{
+void ArtData::setTotalTime(const QString &totalTime) {
     m_totalTimeLabel->setText(totalTime);
 }
 
-void ArtData::setCurrentTime(const QString &currentTime)
-{
+void ArtData::setCurrentTime(const QString &currentTime) {
     m_currentTimeLabel->setText(currentTime);
 }
 
-void ArtData::setSongTitle(const QString &songTitle)
-{
+void ArtData::setSongTitle(const QString &songTitle) {
     m_songTitleLabel->setText(songTitle);
 }
 
@@ -63,44 +59,21 @@ void ArtData::setAlbumArt(const QImage &image) {
     m_albumArtLabel->setPixmap(QPixmap::fromImage(image));
 }
 
-void ArtData::setAlbumArt(const QString &filePath, const QString &albumArtPath)
-{
-    QImage qImage;
-    int index = filePath.lastIndexOf("/");
-    QString coverPath = filePath.left(index) + "/cover.jpg";
-    QFileInfo f(coverPath);
-
-    qImage.load(Mui::NoAlbumArt);
-    qDebug() << albumArtPath;
-
-    if(!albumArtPath.isEmpty()) {
-        if(!qImage.load(albumArtPath) && f.exists()) {
-            qImage.load(coverPath);
-        }
-    }
-    else if(f.exists()) {
-        qImage.load(coverPath);
-    }
-
-    qDebug() << "Setting pixmap";
-    m_albumArtLabel->setPixmap(QPixmap::fromImage(qImage));
+void ArtData::resetAlbumArt() {
+    m_albumArtLabel->setPixmap(QPixmap::fromImage(defaultAlbumArt));
 }
 
-void ArtData::reset()
-{
-    QImage qImage;
+void ArtData::reset() {
     m_currentTimeLabel->setText(Mui::ZeroTime);
     m_totalTimeLabel->setText(Mui::ZeroTime);
     m_songTitleLabel->setText(Mui::WelcomeText);
 
-    qImage.load(Mui::NoAlbumArt);
-    m_albumArtLabel->setPixmap(QPixmap::fromImage(qImage));
-
     m_seekBar->setValue(0);
     m_seekBar->setMaximum(0);
     m_seekBar->setMinimum(0);
+
+    resetAlbumArt();
 }
 
-ArtData::~ArtData()
-{
+ArtData::~ArtData() {
 }

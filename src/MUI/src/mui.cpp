@@ -60,7 +60,6 @@ void MUI::handleDoubleClick(const QModelIndex &index) {
     songTitle.append(tag.artist);
 
     artDataWidget->setSongTitle(songTitle);
-    artDataWidget->setAlbumArt(tag.albumArt);
     mdWidget->setTag(tag);
 
     ui.actionPlay->setIcon(QIcon(Mui::MediaPauseIcon));
@@ -230,8 +229,12 @@ void MUI::setupSignalsAndSlots() {
             this, SLOT(positionChanged(qint64)));
     connect(player, SIGNAL(durationChanged(qint64)),
             this, SLOT(durationChanged(qint64)));
+    connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
+            this, SLOT(mediaStatusChanged(QMediaPlayer::MediaStatus)));
     connect(player, SIGNAL(stateChanged(QMediaPlayer::State)),
             this, SLOT(stateChanged(QMediaPlayer::State)));
+    connect(player, SIGNAL(metaDataAvailableChanged(bool)),
+            this, SLOT(metaDataAvailableChanged(bool)));
 }
 
 void MUI::keyPressEvent(QKeyEvent *e) {
@@ -264,12 +267,24 @@ void MUI::setupKeyboardShortcuts() {
 }
 
 void MUI::mediaStatusChanged(QMediaPlayer::MediaStatus status) {
+    qDebug() << status;
     switch (status) {
     case QMediaPlayer::EndOfMedia:
         next();
         break;
     default:
         break;
+    }
+}
+
+void MUI::metaDataAvailableChanged(bool available) {
+    if (available) {
+        QImage albumArt = player->metaData(QMediaMetaData::CoverArtImage).value<QImage>();
+        artDataWidget->setAlbumArt(albumArt);
+        mdWidget->setAlbumArt(albumArt);
+    } else {
+        artDataWidget->setAlbumArt(QImage(Mui::NoAlbumArt));
+        mdWidget->resetAlbumArt();
     }
 }
 

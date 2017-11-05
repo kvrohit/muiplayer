@@ -34,7 +34,7 @@ Meta::AudioTag TagReader::getMetaData() const {
     }
     tag.artist = artist.toString();
 
-    tag.albumArt = player->metaData(QMediaMetaData::CoverArtImage).value<QImage>();
+    // tag.albumArt = player->metaData(QMediaMetaData::CoverArtImage).value<QImage>();
     tag.year = player->metaData(QMediaMetaData::Year).toInt();
     tag.filepath = player->media().canonicalUrl().toLocalFile();
     tag.duration = player->duration();
