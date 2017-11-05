@@ -2,6 +2,8 @@
 #define MUI_H
 
 #include <QtWidgets>
+#include <QMediaPlayer>
+#include <QMediaMetaData>
 
 #include "ui_mui.h"
 #include "volumeslider.h"
@@ -9,11 +11,9 @@
 #include "artdata.h"
 #include "about.h"
 
+#include "metadata.h"
 #include "musicdata.h"
 #include "musicdatamodel.h"
-
-#include "cfmod.hpp"
-#include "caudiotags.hpp"
 
 #include "globals.h"
 #include <string>
@@ -28,21 +28,19 @@ public:
 private slots:
     // Media playback related slots
     void handleDoubleClick(const QModelIndex &);
-    void displayTime();
+
+    void positionChanged(qint64);
+    void durationChanged(qint64);
+    void stateChanged(QMediaPlayer::State);
+    void mediaStatusChanged(QMediaPlayer::MediaStatus);
+    void metaDataAvailableChanged(bool);
+
     void stop();
     void play();
     void next();
     void previous();
 
-    // Slider related slots
-    void sSeek();
-    void sFreeze();
-    void sMove(int);
-    void sVolume(int);
-
     void addMusicFiles();
-    void openPlaylist();
-    void savePlaylist();
     void clear();
     void showAboutBox();
     void toggleMenuBar(bool);
@@ -52,13 +50,12 @@ private:
     QModelIndex nowPlayingIndex;
     MusicDataModel model;
 
-    FMOD::Player *p;
-    QTimer *timer;
+    QMediaPlayer *player;
     MetaDataWidget *mdWidget;
     About *aboutDialog;
     ArtData *artDataWidget;
 
-    int ms, lenms;
+    qint64 ms, lenms;
     int volume;
     bool isPlaying, isPaused;
     bool isMenuBarVisible;
@@ -69,9 +66,6 @@ private:
     void setupSignalsAndSlots();
     void setupKeyboardShortcuts();
     void doSelect(const QModelIndex&, const QModelIndex&);
-
-    AudioTag::TagReader tagreader;
-    AudioTag::GenericTag tag;
 
     void keyPressEvent(QKeyEvent *);
     void keyReleaseEvent(QKeyEvent *);

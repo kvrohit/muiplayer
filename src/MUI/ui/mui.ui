@@ -37,7 +37,7 @@
      <widget class="QTreeView" name="treeView">
       <property name="font">
        <font>
-        <pointsize>9</pointsize>
+        <pointsize>10</pointsize>
        </font>
       </property>
       <property name="editTriggers">
@@ -103,7 +103,7 @@
      <x>0</x>
      <y>0</y>
      <width>761</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

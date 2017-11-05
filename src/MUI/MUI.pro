@@ -1,54 +1,50 @@
 # MUI QT PROJECT FILE
 # Modify this if new project files are added
 TEMPLATE = app
+
 TARGET = mui
-QT += widgets
+
+QT += widgets \
+    multimedia
+
 DEPENDPATH += . \
     rcc \
-    sources \
+    src \
     ui
+
 INCLUDEPATH += . \
     ../../inc
 
 # Input
-HEADERS += sources/mui.h \
-    sources/about.h \
-    sources/volumeslider.h \
-    sources/metadatawidget.h \
-    sources/artdata.h \
-    sources/musicdatamodel.h \
-    sources/musicdata.h \
-    sources/globals.h
+HEADERS += src/mui.h \
+    src/about.h \
+    src/volumeslider.h \
+    src/metadatawidget.h \
+    src/artdata.h \
+    src/musicdatamodel.h \
+    src/musicdata.h \
+    src/globals.h \
+    src/metadata.h \
+    src/tagreader.h
+
 FORMS += ui/mui.ui \
     ui/about.ui \
     ui/metadata.ui
-SOURCES += sources/main.cpp \
-    sources/mui.cpp \
-    sources/about.cpp \
-    sources/volumeslider.cpp \
-    sources/metadatawidget.cpp \
-    sources/artdata.cpp \
-    sources/musicdatamodel.cpp \
-    sources/musicdata.cpp \
-    sources/globals.cpp
-RESOURCES += rcc/res.qrc
-CONFIG += release
 
-# for OS specific builds
-win32 {
-    LIBS += -L../../lib \
-        -lfmodex
-    OBJECTS += ../../lib/cfmod.o \
-        ../../lib/cplaylist.o \
-        ../../lib/caudiotags.o
-}
-else {
-    LIBS += -L/usr/lib \
-        -lfmodex
-    OBJECTS += ../../lib/cfmod_linux.o \
-        ../../lib/cplaylist_linux.o \
-        ../../lib/caudiotags_linux.o
-}
+SOURCES += src/main.cpp \
+    src/mui.cpp \
+    src/about.cpp \
+    src/volumeslider.cpp \
+    src/metadatawidget.cpp \
+    src/artdata.cpp \
+    src/musicdatamodel.cpp \
+    src/musicdata.cpp \
+    src/globals.cpp \
+    src/tagreader.cpp
+
+RESOURCES += rcc/res.qrc
+
+CONFIG += release
 
 # Output
 OBJECTS_DIR = obj

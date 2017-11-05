@@ -13,13 +13,12 @@
 #include <QDirIterator>
 
 #include "musicdata.h"
-#include "caudiotags.hpp"
-#include "cfmod.hpp"
-#include "cplaylist.hpp"
+#include "metadata.h"
+#include "tagreader.h"
+#include "globals.h"
 
 const int COLUMNCOUNT = 6;
 const int FILEPATHROLE = Qt::UserRole + 1;
-const QString SUPPORTEDFORMATS = "aiff asf flac fsb it mid midi mod mp2 mp3 ogg raw s3m xm";
 
 class MusicDataModel : public QAbstractTableModel
 {
@@ -40,8 +39,6 @@ public:
                       int column, const QModelIndex &parent);
 
     void appendData(const QString &filepath);
-    void appendPlaylist(const QString &filepath);
-    void savePlaylist(const QString &filepath);
     void appendData(const MusicData &data);
     void updateIcon(int row, Mui::IconState newState);
     void resetData();
@@ -49,17 +46,19 @@ public:
     void load();
     void save();
 
+    Meta::AudioTag audioTagAtIndex(const QModelIndex &) const;
+
     ~MusicDataModel();
 
 signals:
 
 public slots:
+    void metaDataAvailable(const Meta::AudioTag &);
 
 private:
     QList<MusicData*> list;
-
     bool isSupportedFormat(const QString &filepath);
-
+    TagReader *tagReader;
 };
 
 #endif // MUSICDATAMODEL_H

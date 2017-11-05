@@ -1,13 +1,10 @@
 #include "mui.h"
 
 MUI::MUI(QWidget *parent, Qt::WindowFlags flags)
-    : QMainWindow(parent, flags)
-{
+    : QMainWindow(parent, flags) {
     ui.setupUi(this);
 
     aboutDialog = new About(this);
-
-    this->createPopupMenu();
 
     ui.treeView->setModel(&model);
     ui.treeView->hideColumn(Mui::FILEPATH);
@@ -25,7 +22,6 @@ MUI::MUI(QWidget *parent, Qt::WindowFlags flags)
 
     // Sliders and Icons
     QToolBar *artDataToolBar = new QToolBar("Media Info Bar", this);
-
     artDataWidget = new ArtData(artDataToolBar);
     artDataToolBar->addWidget(artDataWidget);
     artDataToolBar->setObjectName("MediaInfoBar");
@@ -33,11 +29,7 @@ MUI::MUI(QWidget *parent, Qt::WindowFlags flags)
     // End Sliders and Icons
 
     isPlaying = isPaused = false;
-
-    timer = new QTimer(this);
-    timer->setInterval(500);
-
-    p = new FMOD::Player();
+    player = new QMediaPlayer();
 
     artDataWidget->m_seekBar->setRange(0, 0);
 
@@ -48,120 +40,72 @@ MUI::MUI(QWidget *parent, Qt::WindowFlags flags)
     toggleMenuBar(isMenuBarVisible);
 }
 
-void MUI::showAboutBox()
-{
+void MUI::showAboutBox() {
     aboutDialog->show();
 }
 
-void MUI::handleDoubleClick(const QModelIndex &index)
-{
-    int row = index.row();
+void MUI::handleDoubleClick(const QModelIndex &index) {
     QString filepath = index.data(FILEPATHROLE).toString();
-    std::string std_filepath = filepath.toStdString();
 
-    try {
-        if(nowPlayingIndex.isValid()) {
-            model.updateIcon(nowPlayingIndex.row(), Mui::STOPPED_STATE);
-        }
-        QString msg = "";
-
-        if(isPlaying) stop();
-
-        p->renderFile(std_filepath);
-        lenms = p->getLength();
-
-        msg.append(filepath);
-
-        try {
-            tagreader.renderFile(std_filepath);
-            tag = tagreader.getTag();
-            mdWidget->setTag(tag, std_filepath);
-
-            msg = "";
-            msg.append(Mui::convertToUnicode(tag.title));
-            msg.append(" <b>by</b> ");
-            msg.append(Mui::convertToUnicode(tag.artist));
-            msg.append(" <b>from the ablum</b> ");
-            msg.append(Mui::convertToUnicode(tag.album));
-
-            artDataWidget->setAlbumArt(filepath, tag.artfile.c_str());
-        }
-        catch(AudioTag::TagException &tex) {
-
-        }
-
-        artDataWidget->setTotalTime(Mui::formatTimeToQString(lenms));
-        artDataWidget->m_seekBar->setMaximum(lenms);
-        artDataWidget->setSongTitle(msg);
-
-        p->play();
-        sVolume(volume);
-        model.updateIcon(row, Mui::PLAY_STATE);
-
-        ui.actionPlay->setIcon(QIcon(Mui::MediaPauseIcon));
-        isPlaying = true;
-        timer->start();
-        nowPlayingIndex = index;
+    if (isPlaying) {
+        stop();
     }
-    catch(FMOD::FMODException &e) {
 
-    }
+    player->setMedia(QUrl::fromLocalFile(filepath));
+    player->play();
+
+    Meta::AudioTag tag = model.audioTagAtIndex(index);
+    QString songTitle = tag.title;
+    songTitle.append("<b> by </b>");
+    songTitle.append(tag.artist);
+
+    artDataWidget->setSongTitle(songTitle);
+    mdWidget->setTag(tag);
+
+    ui.actionPlay->setIcon(QIcon(Mui::MediaPauseIcon));
+    isPlaying = true;
+    nowPlayingIndex = index;
 }
 
-void MUI::stop()
-{
-    p->stop();
+void MUI::stop() {
+    player->stop();
+    player->setMedia(QMediaContent());
     isPlaying = isPaused = false;
     ui.actionPlay->setIcon(QIcon(Mui::MediaPlaybackIcon));
     artDataWidget->reset();
     mdWidget->reset();
-    timer->stop();
-
-    if(tag.artfile != "")
-    {
-        QDir().remove( tag.artfile.c_str() );
-    }
 }
 
-void MUI::play()
-{
-    if(isPlaying) {
-        p->pause();
-        ui.actionPlay->setIcon(QIcon(Mui::MediaPlaybackIcon));
-        model.updateIcon(nowPlayingIndex.row(), Mui::PAUSED_STATE);
-        isPaused = true;
-        isPlaying = false;
+void MUI::play() {
+    switch (player->state()) {
+    case QMediaPlayer::PlayingState:
+        player->pause();
         return;
-    }
-    else if(isPaused) {
-        p->resume();
-        ui.actionPlay->setIcon(QIcon(Mui::MediaPauseIcon));
-        model.updateIcon(nowPlayingIndex.row(), Mui::PLAY_STATE);
-        isPaused = false;
-        isPlaying = true;
+    case QMediaPlayer::PausedState:
+        player->play();
+        return;
+    default:
         return;
     }
 
     QModelIndex l = ui.treeView->currentIndex();
-    if(!l.isValid()) {
+    if (!l.isValid()) {
         return;
     }
+
     handleDoubleClick(l);
 }
 
-void MUI::next()
-{
+void MUI::next() {
     doSelect(nowPlayingIndex, ui.treeView->indexBelow(nowPlayingIndex));
 }
 
-void MUI::previous()
-{
+void MUI::previous() {
     doSelect(nowPlayingIndex, ui.treeView->indexAbove(nowPlayingIndex));
 }
 
-void MUI::doSelect(const QModelIndex &currentIndex, const QModelIndex &newIndex)
-{
-    if(!newIndex.isValid()) {
+void MUI::doSelect(const QModelIndex &/*currentIndex*/, const QModelIndex &newIndex) {
+    if (!newIndex.isValid()) {
         return;
     }
 
@@ -170,95 +114,35 @@ void MUI::doSelect(const QModelIndex &currentIndex, const QModelIndex &newIndex)
 
     ui.treeView->setCurrentIndex(newIndex);
     rowSelection.select(newIndex, newIndex);
-    selectionModel->select(rowSelection, QItemSelectionModel::ClearAndSelect
-                           | QItemSelectionModel::Rows);
-    model.updateIcon(currentIndex.row(), Mui::STOPPED_STATE);
+    selectionModel->select(rowSelection,
+                           QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
     handleDoubleClick(newIndex);
 }
 
-void MUI::openPlaylist()
-{
-    QString filename = QFileDialog::getOpenFileName(this, "Open Playlist", "/",
-        Mui::PlaylistFilter);
-
-    if(filename.isEmpty()) {
-        return;
-    }
-
-    model.appendPlaylist(filename);
-}
-
-void MUI::savePlaylist()
-{
-    QString filename = QFileDialog::getSaveFileName(this, "Save Playlist", "/",
-        Mui::PlaylistFilter);
-
-    if(filename.isEmpty()) {
-        return;
-    }
-
-    model.savePlaylist(filename);
-}
-
-void MUI::addMusicFiles()
-{
+void MUI::addMusicFiles() {
     QStringList files = QFileDialog::getOpenFileNames(this, "Open", "/",
-        Mui::AudioFilter);
+                                                      Mui::AudioFilter);
 
     foreach(QString filename, files) {
         model.appendData(filename);
     }
 }
 
-void MUI::clear()
-{
+void MUI::clear() {
     model.resetData();
 }
 
-void MUI::displayTime()
-{
-    ms = p->getPosition();
-
-    if(ms == lenms) {
-        next();
-        return;
-    }
-
-    artDataWidget->m_seekBar->setValue(ms);
-    artDataWidget->setCurrentTime(Mui::formatTimeToQString(ms));
+void MUI::positionChanged(qint64 pos) {
+    artDataWidget->m_seekBar->setValue(pos);
+    artDataWidget->setCurrentTime(Mui::formatTimeToQString(pos));
 }
 
-void MUI::sSeek()
-{
-    unsigned int pos = artDataWidget->m_seekBar->value();
-    p->setPosition(pos);
-    timer->start();
+void MUI::durationChanged(qint64 duration) {
+    artDataWidget->m_seekBar->setRange(0, duration);
+    artDataWidget->setTotalTime(Mui::formatTimeToQString(duration));
 }
 
-void MUI::sFreeze()
-{
-    timer->stop();
-}
-
-void MUI::sMove(int value)
-{
-    artDataWidget->setCurrentTime(Mui::formatTimeToQString(value));
-}
-
-void MUI::sVolume(int value)
-{
-    try {
-        float v = value / 100.00;
-        volume = value;
-        p->setVolume(v);
-    }
-    catch(FMOD::FMODException &e) {
-
-    }
-}
-
-void MUI::loadSettings()
-{
+void MUI::loadSettings() {
     QSettings settings("BurningMedia", "MUI");
 
     settings.beginGroup("MainWindow");
@@ -291,17 +175,7 @@ void MUI::loadSettings()
     model.load();
 }
 
-void MUI::closeEvent(QCloseEvent *event)
-{
-    if(tag.artfile != "") {
-        QDir().remove( tag.artfile.c_str() );
-    }
-    saveSettings();
-    event->accept();
-}
-
-void MUI::saveSettings()
-{
+void MUI::saveSettings() {
     QSettings settings("BurningMedia", "MUI");
 
     settings.beginGroup("MainWindow");
@@ -328,26 +202,9 @@ void MUI::saveSettings()
     model.save();
 }
 
-void MUI::setupSignalsAndSlots()
-{
-    connect(timer, SIGNAL(timeout()),
-        this, SLOT(displayTime()));
-
-    connect(artDataWidget->m_seekBar, SIGNAL(sliderReleased()),
-        this, SLOT(sSeek()));
-    connect(artDataWidget->m_seekBar, SIGNAL(sliderPressed()),
-        this, SLOT(sFreeze()));
-    connect(artDataWidget->m_seekBar, SIGNAL(sliderMoved(int)),
-        this, SLOT(sMove(int)));
-    //connect(sliderVolume, SIGNAL(sliderMoved(int)),
-    //    this, SLOT(sVolume(int)));
-
+void MUI::setupSignalsAndSlots() {
     connect(ui.actionExit, SIGNAL(triggered()),
         this, SLOT(close()));
-    connect(ui.actionOpen, SIGNAL(triggered()),
-        this, SLOT(openPlaylist()));
-    connect(ui.actionSave, SIGNAL(triggered()),
-        this, SLOT(savePlaylist()));
     connect(ui.actionClear, SIGNAL(triggered()),
         this, SLOT(clear()));
     connect(ui.actionAbout, SIGNAL(triggered()),
@@ -367,6 +224,17 @@ void MUI::setupSignalsAndSlots()
 
     connect(ui.actionShowMenuBar, SIGNAL(toggled(bool)),
         this, SLOT(toggleMenuBar(bool)));
+
+    connect(player, SIGNAL(positionChanged(qint64)),
+            this, SLOT(positionChanged(qint64)));
+    connect(player, SIGNAL(durationChanged(qint64)),
+            this, SLOT(durationChanged(qint64)));
+    connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
+            this, SLOT(mediaStatusChanged(QMediaPlayer::MediaStatus)));
+    connect(player, SIGNAL(stateChanged(QMediaPlayer::State)),
+            this, SLOT(stateChanged(QMediaPlayer::State)));
+    connect(player, SIGNAL(metaDataAvailableChanged(bool)),
+            this, SLOT(metaDataAvailableChanged(bool)));
 }
 
 void MUI::keyPressEvent(QKeyEvent *e) {
@@ -398,11 +266,50 @@ void MUI::setupKeyboardShortcuts() {
     ui.actionShowMenuBar->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_M));
 }
 
-MUI::~MUI()
-{
-    // Do cleanup here...
-    delete p;
-    delete timer;
+void MUI::mediaStatusChanged(QMediaPlayer::MediaStatus status) {
+    qDebug() << status;
+    switch (status) {
+    case QMediaPlayer::EndOfMedia:
+        next();
+        break;
+    default:
+        break;
+    }
+}
+
+void MUI::metaDataAvailableChanged(bool available) {
+    if (available) {
+        QImage albumArt = player->metaData(QMediaMetaData::CoverArtImage).value<QImage>();
+        artDataWidget->setAlbumArt(albumArt);
+        mdWidget->setAlbumArt(albumArt);
+    } else {
+        artDataWidget->setAlbumArt(QImage(Mui::NoAlbumArt));
+        mdWidget->resetAlbumArt();
+    }
+}
+
+void MUI::stateChanged(QMediaPlayer::State state) {
+    switch (state) {
+    case QMediaPlayer::PlayingState:
+        ui.actionPlay->setIcon(QIcon(Mui::MediaPauseIcon));
+        break;
+    case QMediaPlayer::PausedState:
+        ui.actionPlay->setIcon(QIcon(Mui::MediaPlaybackIcon));
+        break;
+    case QMediaPlayer::StoppedState:
+        break;
+    default:
+        break;
+    }
+}
+
+void MUI::closeEvent(QCloseEvent *event) {
+    saveSettings();
+    event->accept();
+}
+
+MUI::~MUI() {
+    delete player;
     delete artDataWidget;
     delete mdWidget;
     delete aboutDialog;
