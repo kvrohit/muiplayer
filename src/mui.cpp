@@ -28,9 +28,7 @@ MUI::MUI(QWidget *parent, Qt::WindowFlags flags)
     addToolBar(artDataToolBar);
     // End Sliders and Icons
 
-    isPlaying = isPaused = false;
-    player = new QMediaPlayer();
-
+    player = new QMediaPlayer(this);
     artDataWidget->m_seekBar->setRange(0, 0);
 
     setupKeyboardShortcuts();
@@ -47,7 +45,7 @@ void MUI::showAboutBox() {
 void MUI::handleDoubleClick(const QModelIndex &index) {
     QString filepath = index.data(FILEPATHROLE).toString();
 
-    if (isPlaying) {
+    if (player->state() == QMediaPlayer::PlayingState) {
         stop();
     }
 
@@ -63,14 +61,12 @@ void MUI::handleDoubleClick(const QModelIndex &index) {
     mdWidget->setTag(tag);
 
     ui.actionPlay->setIcon(QIcon(Mui::MediaPauseIcon));
-    isPlaying = true;
     nowPlayingIndex = index;
 }
 
 void MUI::stop() {
     player->stop();
     player->setMedia(QMediaContent());
-    isPlaying = isPaused = false;
     ui.actionPlay->setIcon(QIcon(Mui::MediaPlaybackIcon));
     artDataWidget->reset();
     mdWidget->reset();
@@ -166,12 +162,6 @@ void MUI::loadSettings() {
                                 settings.value("col4", "120").toInt());
     settings.endGroup();
 
-    /*
-    settings.beginGroup("SplitterStates");
-    ui.splitterMain->restoreState(settings.value("splitterMain").toByteArray());
-    settings.endGroup();
-    */
-
     model.load();
 }
 
@@ -192,12 +182,6 @@ void MUI::saveSettings() {
     settings.setValue("col3", ui.treeView->columnWidth(Mui::ALBUM));
     settings.setValue("col4", ui.treeView->columnWidth(Mui::DURATION));
     settings.endGroup();
-
-    /*
-    settings.beginGroup("SplitterStates");
-    settings.setValue("splitterMain", ui.splitterMain->saveState());
-    settings.endGroup();
-    */
 
     model.save();
 }
@@ -267,7 +251,6 @@ void MUI::setupKeyboardShortcuts() {
 }
 
 void MUI::mediaStatusChanged(QMediaPlayer::MediaStatus status) {
-    qDebug() << status;
     switch (status) {
     case QMediaPlayer::EndOfMedia:
         next();
@@ -279,11 +262,18 @@ void MUI::mediaStatusChanged(QMediaPlayer::MediaStatus status) {
 
 void MUI::metaDataAvailableChanged(bool available) {
     if (available) {
-        QImage albumArt = player->metaData(QMediaMetaData::CoverArtImage).value<QImage>();
-        artDataWidget->setAlbumArt(albumArt);
-        mdWidget->setAlbumArt(albumArt);
+        QVariant art = player->metaData(QMediaMetaData::CoverArtImage);
+
+        if (art.isValid()) {
+            QImage albumArt = player->metaData(QMediaMetaData::CoverArtImage).value<QImage>();
+            artDataWidget->setAlbumArt(albumArt);
+            mdWidget->setAlbumArt(albumArt);
+        } else {
+            artDataWidget->resetAlbumArt();
+            mdWidget->resetAlbumArt();
+        }
     } else {
-        artDataWidget->setAlbumArt(QImage(Mui::NoAlbumArt));
+        artDataWidget->resetAlbumArt();
         mdWidget->resetAlbumArt();
     }
 }

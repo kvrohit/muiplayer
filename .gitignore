@@ -1,9 +1,9 @@
 bin/*
 lib/*
-src/MUI/obj/*
-src/MUI/moc/*
-src/MUI/Makefile
-src/MUI/ui/*.h
-src/MUI/rcc/*.cpp
+obj/*
+moc/*
 Makefile
+ui/*.h
+rcc/*.cpp
 *.stash
+MUI.pro.user

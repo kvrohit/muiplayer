@@ -57,7 +57,6 @@ private:
 
     qint64 ms, lenms;
     int volume;
-    bool isPlaying, isPaused;
     bool isMenuBarVisible;
 
     void loadSettings();
