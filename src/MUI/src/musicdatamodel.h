@@ -46,6 +46,8 @@ public:
     void load();
     void save();
 
+    Meta::AudioTag audioTagAtIndex(const QModelIndex &) const;
+
     ~MusicDataModel();
 
 signals:

@@ -30,7 +30,6 @@ private slots:
     void handleDoubleClick(const QModelIndex &);
     void positionChanged(qint64);
     void durationChanged(qint64);
-    void metaDataAvailable(bool);
     void stateChanged(QMediaPlayer::State);
     void mediaStatusChanged(QMediaPlayer::MediaStatus);
     void stop();

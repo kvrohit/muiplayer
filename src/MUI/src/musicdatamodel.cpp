@@ -230,6 +230,17 @@ void MusicDataModel::metaDataAvailable(const Meta::AudioTag &tag) {
     endInsertRows();
 }
 
+Meta::AudioTag MusicDataModel::audioTagAtIndex(const QModelIndex &index) const {
+    Meta::AudioTag tag;
+    MusicData *d = list.at(index.row());
+    tag.album = d->album;
+    tag.artist = d->artist;
+    tag.duration = 0;
+    tag.title = d->songtitle;
+    tag.filepath = d->filepath;
+    return tag;
+}
+
 MusicDataModel::~MusicDataModel() {
     qDeleteAll(list);
     delete tagReader;
