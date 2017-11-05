@@ -1,7 +1,6 @@
 # MUI QT PROJECT FILE
 # Modify this if new project files are added
 TEMPLATE = app
-
 TARGET = mui
 
 QT += widgets \
@@ -11,9 +10,6 @@ DEPENDPATH += . \
     rcc \
     src \
     ui
-
-INCLUDEPATH += . \
-    ../../inc
 
 # Input
 HEADERS += src/mui.h \
@@ -51,4 +47,4 @@ OBJECTS_DIR = obj
 UI_DIR = ui
 MOC_DIR = moc
 RCC_DIR = rcc
-DESTDIR = ../../bin
+DESTDIR = bin
