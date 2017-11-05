@@ -14,7 +14,6 @@
 
 #include "musicdata.h"
 #include "metadata.h"
-#include "cplaylist.hpp"
 #include "tagreader.h"
 #include "globals.h"
 
@@ -40,8 +39,6 @@ public:
                       int column, const QModelIndex &parent);
 
     void appendData(const QString &filepath);
-    void appendPlaylist(const QString &filepath);
-    void savePlaylist(const QString &filepath);
     void appendData(const MusicData &data);
     void updateIcon(int row, Mui::IconState newState);
     void resetData();

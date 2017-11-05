@@ -39,8 +39,6 @@ private slots:
     void previous();
 
     void addMusicFiles();
-    void openPlaylist();
-    void savePlaylist();
     void clear();
     void showAboutBox();
     void toggleMenuBar(bool);
@@ -66,9 +64,6 @@ private:
     void setupSignalsAndSlots();
     void setupKeyboardShortcuts();
     void doSelect(const QModelIndex&, const QModelIndex&);
-
-    AudioTag::TagReader tagreader;
-    AudioTag::GenericTag tag;
 
     void keyPressEvent(QKeyEvent *);
     void keyReleaseEvent(QKeyEvent *);

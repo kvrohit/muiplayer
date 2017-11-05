@@ -111,28 +111,6 @@ void MUI::doSelect(const QModelIndex &/*currentIndex*/, const QModelIndex &newIn
     handleDoubleClick(newIndex);
 }
 
-void MUI::openPlaylist() {
-    QString filename = QFileDialog::getOpenFileName(this, "Open Playlist", "/",
-                                                    Mui::PlaylistFilter);
-
-    if (filename.isEmpty()) {
-        return;
-    }
-
-    model.appendPlaylist(filename);
-}
-
-void MUI::savePlaylist() {
-    QString filename = QFileDialog::getSaveFileName(this, "Save Playlist", "/",
-                                                    Mui::PlaylistFilter);
-
-    if (filename.isEmpty()) {
-        return;
-    }
-
-    model.savePlaylist(filename);
-}
-
 void MUI::addMusicFiles() {
     QStringList files = QFileDialog::getOpenFileNames(this, "Open", "/",
                                                       Mui::AudioFilter);
@@ -219,10 +197,6 @@ void MUI::saveSettings() {
 void MUI::setupSignalsAndSlots() {
     connect(ui.actionExit, SIGNAL(triggered()),
         this, SLOT(close()));
-    connect(ui.actionOpen, SIGNAL(triggered()),
-        this, SLOT(openPlaylist()));
-    connect(ui.actionSave, SIGNAL(triggered()),
-        this, SLOT(savePlaylist()));
     connect(ui.actionClear, SIGNAL(triggered()),
         this, SLOT(clear()));
     connect(ui.actionAbout, SIGNAL(triggered()),

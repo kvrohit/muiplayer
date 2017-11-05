@@ -140,50 +140,6 @@ void MusicDataModel::appendData(const QString &filepath)
     loop.exec();
 }
 
-void MusicDataModel::appendPlaylist(const QString &filepath) {
-    MUIPlaylist::Playlist p;
-    int length;
-    std::string strTitle, strFilepath;
-
-    try {
-        p.renderPlaylist(filepath.toStdString());
-
-        while(p.getNextEntry(length, strTitle, strFilepath)) {
-            appendData(QString::fromStdString(strFilepath));
-        }
-    }
-    catch(MUIPlaylist::PlaylistException &e) {
-        qDebug() << QString::fromStdString(e.what());
-    }
-}
-
-void MusicDataModel::savePlaylist(const QString &filepath) {
-    MUIPlaylist::Playlist p;
-    std::string strTitle, strPath, strLen, strFilepath;
-    int length, min, sec;
-
-    strFilepath = filepath.toStdString();
-
-    try {
-        p.createPlaylist(strFilepath, false);
-
-        for(int i = 0; i < rowCount(); ++i) {
-            strTitle = list.at(i)->songtitle.toStdString();
-            strLen = list.at(i)->duration.toStdString();
-            strPath = list.at(i)->filepath.toStdString();
-
-            sscanf(strTitle.c_str(), "%d:%d", &min, &sec);
-            length = (min * 60) + sec;
-
-            p.writeNextEntry(length, strTitle, strPath);
-        }
-        p.endList();
-    }
-    catch(MUIPlaylist::PlaylistException &e) {
-        qDebug() << QString::fromStdString(e.what());
-    }
-}
-
 void MusicDataModel::appendData(const MusicData &data) {
     int row = rowCount();
     beginInsertRows(QModelIndex(), row, row);
